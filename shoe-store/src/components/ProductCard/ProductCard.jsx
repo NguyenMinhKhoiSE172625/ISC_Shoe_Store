@@ -1,11 +1,24 @@
 import { Link } from "react-router-dom"
+import { motion, AnimatePresence } from "framer-motion"
+import { useState } from "react"
 import "./ProductCard.css"
 
 const ProductCard = ({ product, isLoggedIn, addToCart }) => {
-  const handleAddToCart = (e) => {
+  const [isAnimating, setIsAnimating] = useState(false)
+
+  const handleAddToCart = async (e) => {
     e.preventDefault()
     e.stopPropagation()
+    
+    if (isAnimating) return // Prevent multiple clicks during animation
+    
+    setIsAnimating(true)
     addToCart(product)
+    
+    // Reset animation after completion
+    setTimeout(() => {
+      setIsAnimating(false)
+    }, 1500)
   }
 
   return (
@@ -21,9 +34,35 @@ const ProductCard = ({ product, isLoggedIn, addToCart }) => {
         </div>
       </Link>
       {isLoggedIn && (
-        <button className="btn btn-primary add-to-cart-btn" onClick={handleAddToCart}>
-          Add to Cart
-        </button>
+        <div className="button-container">
+          <motion.button
+            className="add-to-cart-btn"
+            onClick={handleAddToCart}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.95 }}
+            disabled={isAnimating}
+          >
+            {isAnimating ? "Added! ✓" : "Add to Cart"}
+          </motion.button>
+          <AnimatePresence>
+            {isAnimating && (
+              <motion.div
+                className="success-ring"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  opacity: [1, 0.8, 0],
+                }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ 
+                  duration: 1,
+                  times: [0, 0.5, 1],
+                  ease: "easeInOut"
+                }}
+              />
+            )}
+          </AnimatePresence>
+        </div>
       )}
     </div>
   )
