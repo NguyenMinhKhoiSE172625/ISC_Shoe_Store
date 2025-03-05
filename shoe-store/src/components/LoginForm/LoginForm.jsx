@@ -1,9 +1,11 @@
 "use client"
 
 import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import "./LoginForm.css"
 
 const LoginForm = ({ onLogin }) => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -20,27 +22,27 @@ const LoginForm = ({ onLogin }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    setError("")
 
-    // Simple validation
+    // Kiểm tra dữ liệu đầu vào
     if (!formData.username || !formData.password) {
       setError("Please fill in all fields")
       return
     }
 
-    // Get users from localStorage
-    const users = JSON.parse(localStorage.getItem('users') || '[]')
+    // Lấy danh sách users từ localStorage
+    const users = JSON.parse(localStorage.getItem("users") || "[]")
     
-    // Find user
+    // Tìm user
     const user = users.find(
-      u => u.username === formData.username && u.password === formData.password
+      (u) => u.username === formData.username && u.password === formData.password
     )
 
     if (user) {
-      onLogin({
-        username: user.username,
-        id: Date.now(), // Generate a temporary ID
-        email: user.email
-      })
+      // Đăng nhập thành công
+      onLogin(user)
+      // Chuyển về trang chủ
+      navigate("/")
     } else {
       setError("Invalid username or password")
     }
@@ -49,7 +51,7 @@ const LoginForm = ({ onLogin }) => {
   return (
     <div className="login-form-container">
       <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Login to Your Account</h2>
+        <h2>Welcome Back</h2>
 
         {error && <div className="error-message">{error}</div>}
 
@@ -61,7 +63,7 @@ const LoginForm = ({ onLogin }) => {
             name="username"
             value={formData.username}
             onChange={handleChange}
-            placeholder="Enter your username"
+            required
           />
         </div>
 
@@ -73,7 +75,7 @@ const LoginForm = ({ onLogin }) => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            placeholder="Enter your password"
+            required
           />
         </div>
 
@@ -81,9 +83,10 @@ const LoginForm = ({ onLogin }) => {
           Login
         </button>
 
-        <p className="login-help-text">
-          Don't have an account? <a href="/register">Register here</a>
-        </p>
+        <div className="login-help-text">
+          Don't have an account?{" "}
+          <Link to="/register">Register here</Link>
+        </div>
       </form>
     </div>
   )
