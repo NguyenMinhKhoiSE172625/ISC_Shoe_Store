@@ -1,0 +1,22 @@
+.main-content {
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Optional: Add these styles if you want a fade effect between pages */
+.main-content::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.page-transitioning .main-content::after {
+  opacity: 0.5;
+} 

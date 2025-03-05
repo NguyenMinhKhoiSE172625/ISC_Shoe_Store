@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom"
+import { AnimatePresence } from "framer-motion"
+import PageTransition from "./components/PageTransition/PageTransition"
 
 // Components
 import Header from "./components/Header/Header"
@@ -19,6 +21,96 @@ import CheckoutPage from "./pages/CheckoutPage/CheckoutPage"
 // Styles
 import "./App.css"
 
+// Tạo một component con để sử dụng useLocation
+function AppContent({ 
+  isLoggedIn, 
+  user, 
+  handleLogin,
+  handleLogout,
+  cart, 
+  addToCart, 
+  updateQuantity,
+  removeFromCart,
+  clearCart 
+}) {
+  const location = useLocation()
+  
+  return (
+    <div className="app">
+      <Header 
+        isLoggedIn={isLoggedIn}
+        user={user}
+        onLogout={handleLogout}
+        cartItemCount={cart.reduce((total, item) => total + item.quantity, 0)}
+      />
+      <main className="main-content">
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route 
+              path="/" 
+              element={
+                <PageTransition>
+                  <HomePage />
+                </PageTransition>
+              } 
+            />
+            <Route 
+              path="/products" 
+              element={
+                <PageTransition>
+                  <ProductsPage isLoggedIn={isLoggedIn} addToCart={addToCart} />
+                </PageTransition>
+              } 
+            />
+            <Route 
+              path="/products/:id" 
+              element={
+                <PageTransition>
+                  <ProductDetailPage isLoggedIn={isLoggedIn} addToCart={addToCart} />
+                </PageTransition>
+              } 
+            />
+            <Route 
+              path="/cart" 
+              element={
+                <PageTransition>
+                  <CartPage cart={cart} updateQuantity={updateQuantity} removeFromCart={removeFromCart} isLoggedIn={isLoggedIn} />
+                </PageTransition>
+              } 
+            />
+            <Route 
+              path="/login" 
+              element={
+                <PageTransition>
+                  <LoginPage onLogin={handleLogin} />
+                </PageTransition>
+              } 
+            />
+            <Route 
+              path="/register" 
+              element={
+                <PageTransition>
+                  <RegisterPage />
+                </PageTransition>
+              } 
+            />
+            <Route 
+              path="/checkout" 
+              element={
+                <PageTransition>
+                  <CheckoutPage cart={cart} clearCart={clearCart} />
+                </PageTransition>
+              } 
+            />
+          </Routes>
+        </AnimatePresence>
+      </main>
+      <Footer />
+    </div>
+  )
+}
+
+// Component App chính
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [user, setUser] = useState(null)
@@ -63,39 +155,17 @@ function App() {
 
   return (
     <Router>
-      <div className="app">
-        <Header
-          isLoggedIn={isLoggedIn}
-          user={user}
-          onLogout={handleLogout}
-          cartItemCount={cart.reduce((total, item) => total + item.quantity, 0)}
-        />
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/products" element={<ProductsPage isLoggedIn={isLoggedIn} addToCart={addToCart} />} />
-            <Route path="/products/:id" element={<ProductDetailPage isLoggedIn={isLoggedIn} addToCart={addToCart} />} />
-            <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <LoginPage onLogin={handleLogin} />} />
-            <Route path="/register" element={isLoggedIn ? <Navigate to="/" /> : <RegisterPage />} />
-            <Route
-              path="/cart"
-              element={
-                <CartPage
-                  cart={cart}
-                  updateQuantity={updateQuantity}
-                  removeFromCart={removeFromCart}
-                  isLoggedIn={isLoggedIn}
-                />
-              }
-            />
-            <Route
-              path="/checkout"
-              element={!isLoggedIn ? <Navigate to="/login" /> : <CheckoutPage cart={cart} clearCart={clearCart} />}
-            />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+      <AppContent 
+        isLoggedIn={isLoggedIn}
+        user={user}
+        handleLogin={handleLogin}
+        handleLogout={handleLogout}
+        cart={cart}
+        addToCart={addToCart}
+        updateQuantity={updateQuantity}
+        removeFromCart={removeFromCart}
+        clearCart={clearCart}
+      />
     </Router>
   )
 }
