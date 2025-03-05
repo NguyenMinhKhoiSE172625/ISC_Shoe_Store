@@ -1,0 +1,157 @@
+.product-detail-page {
+    padding: 20px 0;
+  }
+  
+  .product-detail-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+  }
+  
+  .product-image-container {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .product-detail-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .product-info-container {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .product-detail-name {
+    font-size: 28px;
+    margin-bottom: 5px;
+  }
+  
+  .product-detail-brand {
+    color: #666;
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  
+  .product-detail-price {
+    font-size: 24px;
+    font-weight: 700;
+    color: #4a90e2;
+    margin-bottom: 20px;
+  }
+  
+  .product-description {
+    margin-bottom: 20px;
+  }
+  
+  .product-description h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .product-description p {
+    color: #555;
+    line-height: 1.6;
+  }
+  
+  .product-sizes {
+    margin-bottom: 30px;
+  }
+  
+  .product-sizes h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .size-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .size-option {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .size-option:hover {
+    border-color: #4a90e2;
+  }
+  
+  .size-option.selected {
+    background-color: #4a90e2;
+    color: #fff;
+    border-color: #4a90e2;
+  }
+  
+  .error-message {
+    color: #dc3545;
+    margin-top: 10px;
+  }
+  
+  .add-to-cart-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  
+  .login-prompt {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    text-align: center;
+  }
+  
+  .login-prompt a {
+    color: #4a90e2;
+    text-decoration: underline;
+  }
+  
+  .back-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #666;
+    transition: color 0.3s;
+  }
+  
+  .back-link:hover {
+    color: #4a90e2;
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 50px;
+    font-size: 18px;
+    color: #666;
+  }
+  
+  .product-not-found {
+    text-align: center;
+    padding: 50px;
+  }
+  
+  @media (max-width: 768px) {
+    .product-detail-container {
+      flex-direction: column;
+    }
+  }
+  
+  
