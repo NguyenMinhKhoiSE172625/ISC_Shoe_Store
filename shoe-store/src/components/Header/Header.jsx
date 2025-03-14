@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faShoppingCart } from "@fortawesome/free-solid-svg-icons"
 import "./Header.css"
 
 const Header = ({ isLoggedIn, user, onLogout, cartItemCount }) => {
@@ -7,7 +9,7 @@ const Header = ({ isLoggedIn, user, onLogout, cartItemCount }) => {
       <div className="container header-container">
         <div className="logo">
           <Link to="/">
-            <h1>ShoeStore</h1>
+            <h1>Anh Bán Giày</h1>
           </Link>
         </div>
 
@@ -15,12 +17,12 @@ const Header = ({ isLoggedIn, user, onLogout, cartItemCount }) => {
           <ul className="nav-list">
             <li className="nav-item">
               <Link to="/" className="nav-link">
-                Home
+                Trang Chủ
               </Link>
             </li>
             <li className="nav-item">
               <Link to="/products" className="nav-link">
-                Products
+                Sản Phẩm
               </Link>
             </li>
           </ul>
@@ -29,21 +31,22 @@ const Header = ({ isLoggedIn, user, onLogout, cartItemCount }) => {
         <div className="user-actions">
           {isLoggedIn ? (
             <>
-              <span className="welcome-text">Welcome, {user.username}!</span>
+              <span className="welcome-text">Xin chào, {user.username}!</span>
               <Link to="/cart" className="cart-link">
-                Cart ({cartItemCount})
+                <FontAwesomeIcon icon={faShoppingCart} className="cart-icon" />
+                <span className="cart-count">{cartItemCount}</span>
               </Link>
               <button className="btn btn-secondary logout-btn" onClick={onLogout}>
-                Logout
+                Đăng Xuất
               </button>
             </>
           ) : (
             <>
               <Link to="/login" className="btn btn-primary login-btn">
-                Login
+                Đăng Nhập
               </Link>
               <Link to="/register" className="btn btn-secondary register-btn">
-                Register
+                Đăng Ký
               </Link>
             </>
           )}

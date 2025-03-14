@@ -21,6 +21,16 @@ const ProductCard = ({ product, isLoggedIn, addToCart }) => {
     }, 1500)
   }
 
+  // Hàm định dạng giá tiền VND
+  const formatVND = (price) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(price);
+  }
+
   return (
     <div className="product-card">
       <Link to={`/products/${product.id}`} className="product-link">
@@ -30,7 +40,7 @@ const ProductCard = ({ product, isLoggedIn, addToCart }) => {
         <div className="product-info">
           <h3 className="product-name">{product.name}</h3>
           <p className="product-brand">{product.brand}</p>
-          <p className="product-price">${product.price.toFixed(2)}</p>
+          <p className="product-price">{formatVND(product.priceVND)}</p>
         </div>
       </Link>
       {isLoggedIn && (
@@ -42,7 +52,7 @@ const ProductCard = ({ product, isLoggedIn, addToCart }) => {
             whileTap={{ scale: 0.95 }}
             disabled={isAnimating}
           >
-            {isAnimating ? "Added! ✓" : "Add to Cart"}
+            {isAnimating ? "Đã thêm! ✓" : "Thêm vào giỏ"}
           </motion.button>
           <AnimatePresence>
             {isAnimating && (

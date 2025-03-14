@@ -1,78 +1,160 @@
 import { Link } from "react-router-dom"
+import { motion } from "framer-motion"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faShoppingBag, faArrowLeft, faTruck, faShieldAlt } from "@fortawesome/free-solid-svg-icons"
 import CartItem from "../../components/CartItem/CartItem"
 import "./CartPage.css"
 
 const CartPage = ({ cart, updateQuantity, removeFromCart, isLoggedIn }) => {
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const total = cart.reduce((sum, item) => sum + (item.priceVND || item.price * 23000) * item.quantity, 0)
+
+  const formatVND = (price) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(price);
+  }
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  };
 
   if (!isLoggedIn) {
     return (
-      <div className="cart-page">
+      <motion.div 
+        className="cart-page"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="login-required">
-          <h2>Login Required</h2>
-          <p>Please login to view your cart.</p>
+          <FontAwesomeIcon icon={faShoppingBag} className="login-icon" />
+          <h2>Yêu Cầu Đăng Nhập</h2>
+          <p>Vui lòng đăng nhập để xem giỏ hàng của bạn.</p>
           <Link to="/login" className="btn btn-primary">
-            Login
+            Đăng Nhập
           </Link>
         </div>
-      </div>
+      </motion.div>
     )
   }
 
   return (
-    <div className="cart-page">
-      <h1 className="page-title">Your Cart</h1>
+    <motion.div 
+      className="cart-page"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.h1 
+        className="page-title"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        Giỏ Hàng Của Bạn
+      </motion.h1>
 
       {cart.length === 0 ? (
-        <div className="empty-cart">
-          <h2>Your cart is empty</h2>
-          <p>Looks like you haven't added any items to your cart yet.</p>
+        <motion.div 
+          className="empty-cart"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <FontAwesomeIcon icon={faShoppingBag} className="empty-cart-icon" />
+          <h2>Giỏ hàng của bạn đang trống</h2>
+          <p>Có vẻ như bạn chưa thêm bất kỳ sản phẩm nào vào giỏ hàng.</p>
           <Link to="/products" className="btn btn-primary">
-            Continue Shopping
+            Tiếp Tục Mua Sắm
           </Link>
-        </div>
+        </motion.div>
       ) : (
         <div className="cart-container">
-          <div className="cart-items">
+          <motion.div 
+            className="cart-items"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
             {cart.map((item) => (
-              <CartItem key={item.id} item={item} updateQuantity={updateQuantity} removeFromCart={removeFromCart} />
+              <motion.div key={item.id} variants={itemVariants}>
+                <CartItem item={item} updateQuantity={updateQuantity} removeFromCart={removeFromCart} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
-          <div className="cart-summary">
-            <h2>Order Summary</h2>
+          <motion.div 
+            className="cart-summary"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <h2>Tóm Tắt Đơn Hàng</h2>
 
             <div className="summary-row">
-              <span>Subtotal:</span>
-              <span>${total.toFixed(2)}</span>
+              <span>Tạm tính:</span>
+              <span>{formatVND(total)}</span>
             </div>
 
             <div className="summary-row">
-              <span>Shipping:</span>
-              <span>$0.00</span>
+              <span>Phí vận chuyển:</span>
+              <span>{formatVND(0)}</span>
             </div>
 
             <div className="summary-row">
-              <span>Tax:</span>
-              <span>${(total * 0.1).toFixed(2)}</span>
+              <span>Thuế:</span>
+              <span>{formatVND(total * 0.1)}</span>
             </div>
 
             <div className="summary-row total">
-              <span>Total:</span>
-              <span>${(total + total * 0.1).toFixed(2)}</span>
+              <span>Tổng cộng:</span>
+              <span>{formatVND(total + total * 0.1)}</span>
             </div>
 
-            <Link to="/checkout" className="btn btn-primary checkout-btn">
-              Proceed to Checkout
-            </Link>
+            <div className="cart-benefits">
+              <div className="benefit-item">
+                <FontAwesomeIcon icon={faTruck} className="benefit-icon" />
+                <span>Miễn phí vận chuyển</span>
+              </div>
+              <div className="benefit-item">
+                <FontAwesomeIcon icon={faShieldAlt} className="benefit-icon" />
+                <span>Bảo hành 30 ngày</span>
+              </div>
+            </div>
+
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="checkout-btn-container"
+            >
+              <Link to="/checkout" className="checkout-btn">
+                Tiến Hành Thanh Toán
+              </Link>
+            </motion.div>
 
             <Link to="/products" className="continue-shopping">
-              Continue Shopping
+              <FontAwesomeIcon icon={faArrowLeft} className="back-icon" />
+              <span>Tiếp Tục Mua Sắm</span>
             </Link>
-          </div>
+          </motion.div>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }
 

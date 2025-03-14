@@ -17,14 +17,14 @@ const HomePage = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Step into Style with ShoeStore
+            Bước Vào Phong Cách Cùng <br />Anh Bán Giày
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Discover the perfect shoes for every occasion
+            Khám phá những đôi giày hoàn hảo cho mọi dịp
           </motion.p>
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -32,7 +32,7 @@ const HomePage = () => {
             transition={{ duration: 0.5, delay: 0.6 }}
           >
             <Link to="/products" className="btn btn-primary hero-btn">
-              Shop Now
+              Mua Ngay
             </Link>
           </motion.div>
         </motion.div>
@@ -47,30 +47,30 @@ const HomePage = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            Why Choose Us
+            Tại Sao Chọn Chúng Tôi
           </motion.h2>
 
           <div className="features-grid">
             {[
               {
                 icon: "🌟",
-                title: "Quality Products",
-                description: "We offer only the highest quality footwear from trusted brands."
+                title: "Sản Phẩm Chất Lượng",
+                description: "Chúng tôi chỉ cung cấp giày dép chất lượng cao từ các thương hiệu uy tín."
               },
               {
                 icon: "🚚",
-                title: "Fast Shipping",
-                description: "Get your shoes delivered to your doorstep in no time."
+                title: "Giao Hàng Nhanh",
+                description: "Nhận giày của bạn tại nhà trong thời gian ngắn nhất."
               },
               {
                 icon: "💰",
-                title: "Best Prices",
-                description: "Competitive prices and regular discounts on all our products."
+                title: "Giá Tốt Nhất",
+                description: "Giá cả cạnh tranh và thường xuyên giảm giá trên tất cả sản phẩm."
               },
               {
                 icon: "🔄",
-                title: "Easy Returns",
-                description: "Not satisfied? Return your purchase within 30 days."
+                title: "Đổi Trả Dễ Dàng",
+                description: "Không hài lòng? Trả lại sản phẩm trong vòng 30 ngày."
               }
             ].map((feature, index) => (
               <motion.div 
@@ -103,29 +103,29 @@ const HomePage = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            Shop by Category
+            Mua Sắm Theo Danh Mục
           </motion.h2>
 
           <div className="categories-grid">
             <Link to="/products" className="category-card">
               <div className="category-image">
-                <img src="/placeholder.svg?height=300&width=300" alt="Men's Shoes" />
+                <img src="https://i.ytimg.com/vi/0jvt8Js0OU0/maxresdefault.jpg" alt="Giày Nam" />
               </div>
-              <h3>Men's Shoes</h3>
+              <h3>Giày Nam</h3>
             </Link>
 
             <Link to="/products" className="category-card">
               <div className="category-image">
-                <img src="/placeholder.svg?height=300&width=300" alt="Women's Shoes" />
+                <img src="https://i.redd.it/wck5ryuztfq31.png" alt="Giày Nữ" />
               </div>
-              <h3>Women's Shoes</h3>
+              <h3>Giày Nữ</h3>
             </Link>
 
             <Link to="/products" className="category-card">
               <div className="category-image">
-                <img src="/placeholder.svg?height=300&width=300" alt="Sports Shoes" />
+                <img src="https://i.natgeofe.com/n/f4456538-ddd4-401f-946d-0dca7e450d9b/2024-0228-29_HOKA_F24BRAND_ROAD_MMF_MACHX2_LIBRARY7_FULL_RGB_4x3.jpg?w=1224&h=918" alt="Giày Thể Thao" />
               </div>
-              <h3>Sports Shoes</h3>
+              <h3>Giày Thể Thao</h3>
             </Link>
           </div>
         </div>

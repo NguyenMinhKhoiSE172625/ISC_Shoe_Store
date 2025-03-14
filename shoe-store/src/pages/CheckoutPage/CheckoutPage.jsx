@@ -18,11 +18,11 @@ const CheckoutPage = ({ cart, clearCart }) => {
 
   return (
     <div className="checkout-page">
-      <h1 className="page-title">Checkout</h1>
+      <h1 className="page-title">Thanh Toán</h1>
 
       <div className="checkout-container">
         <div className="order-items">
-          <h2>Order Items ({cart.length})</h2>
+          <h2>Sản Phẩm Đặt Hàng ({cart.length})</h2>
 
           {cart.map((item) => (
             <div key={item.id} className="checkout-item">
@@ -32,8 +32,8 @@ const CheckoutPage = ({ cart, clearCart }) => {
 
               <div className="checkout-item-details">
                 <h3>{item.name}</h3>
-                <p>Size: {item.selectedSize || "N/A"}</p>
-                <p>Quantity: {item.quantity}</p>
+                <p>Kích cỡ: {item.selectedSize || "N/A"}</p>
+                <p>Số lượng: {item.quantity}</p>
                 <p className="checkout-item-price">${(item.price * item.quantity).toFixed(2)}</p>
               </div>
             </div>

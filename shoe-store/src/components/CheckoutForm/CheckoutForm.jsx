@@ -35,7 +35,7 @@ const CheckoutForm = ({ cart, total, clearCart }) => {
     // Simulate payment processing
     setTimeout(() => {
       // Order successful
-      alert("Order placed successfully!")
+      alert("Đặt hàng thành công!")
       clearCart()
       navigate("/")
       setIsSubmitting(false)
@@ -46,11 +46,11 @@ const CheckoutForm = ({ cart, total, clearCart }) => {
     <div className="checkout-form-container">
       <form className="checkout-form" onSubmit={handleSubmit}>
         <div className="form-section">
-          <h3>Shipping Information</h3>
+          <h3>Thông Tin Giao Hàng</h3>
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="firstName">First Name</label>
+              <label htmlFor="firstName">Tên</label>
               <input
                 type="text"
                 id="firstName"
@@ -62,7 +62,7 @@ const CheckoutForm = ({ cart, total, clearCart }) => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="lastName">Last Name</label>
+              <label htmlFor="lastName">Họ</label>
               <input
                 type="text"
                 id="lastName"
@@ -80,18 +80,18 @@ const CheckoutForm = ({ cart, total, clearCart }) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="address">Address</label>
+            <label htmlFor="address">Địa chỉ</label>
             <input type="text" id="address" name="address" value={formData.address} onChange={handleChange} required />
           </div>
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="city">City</label>
+              <label htmlFor="city">Thành phố</label>
               <input type="text" id="city" name="city" value={formData.city} onChange={handleChange} required />
             </div>
 
             <div className="form-group">
-              <label htmlFor="zipCode">ZIP Code</label>
+              <label htmlFor="zipCode">Mã bưu điện</label>
               <input
                 type="text"
                 id="zipCode"
@@ -105,10 +105,10 @@ const CheckoutForm = ({ cart, total, clearCart }) => {
         </div>
 
         <div className="form-section">
-          <h3>Payment Information</h3>
+          <h3>Thông Tin Thanh Toán</h3>
 
           <div className="form-group">
-            <label htmlFor="cardNumber">Card Number</label>
+            <label htmlFor="cardNumber">Số thẻ</label>
             <input
               type="text"
               id="cardNumber"
@@ -121,7 +121,7 @@ const CheckoutForm = ({ cart, total, clearCart }) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="cardName">Name on Card</label>
+            <label htmlFor="cardName">Tên trên thẻ</label>
             <input
               type="text"
               id="cardName"
@@ -134,7 +134,7 @@ const CheckoutForm = ({ cart, total, clearCart }) => {
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="expiryDate">Expiry Date</label>
+              <label htmlFor="expiryDate">Ngày hết hạn</label>
               <input
                 type="text"
                 id="expiryDate"
@@ -162,23 +162,23 @@ const CheckoutForm = ({ cart, total, clearCart }) => {
         </div>
 
         <div className="order-summary">
-          <h3>Order Summary</h3>
+          <h3>Tóm Tắt Đơn Hàng</h3>
           <div className="summary-row">
-            <span>Subtotal:</span>
+            <span>Tạm tính:</span>
             <span>${total.toFixed(2)}</span>
           </div>
           <div className="summary-row">
-            <span>Shipping:</span>
+            <span>Phí vận chuyển:</span>
             <span>$0.00</span>
           </div>
           <div className="summary-row total">
-            <span>Total:</span>
+            <span>Tổng cộng:</span>
             <span>${total.toFixed(2)}</span>
           </div>
         </div>
 
         <button type="submit" className="btn btn-primary checkout-btn" disabled={isSubmitting}>
-          {isSubmitting ? "Processing..." : `Complete Order - $${total.toFixed(2)}`}
+          {isSubmitting ? "Đang xử lý..." : `Hoàn tất đơn hàng - $${total.toFixed(2)}`}
         </button>
       </form>
     </div>
