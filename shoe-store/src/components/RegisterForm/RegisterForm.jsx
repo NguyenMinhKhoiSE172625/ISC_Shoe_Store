@@ -1,7 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
+import { motion } from "framer-motion"
+import LoadingButton from "../LoadingButton/LoadingButton"
 import "./RegisterForm.css"
 
 const RegisterForm = () => {
@@ -12,8 +15,7 @@ const RegisterForm = () => {
     password: "",
     confirmPassword: "",
   })
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -28,59 +30,99 @@ const RegisterForm = () => {
 
     // Simple validation
     if (!formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
-      setError("Please fill in all fields")
+      toast.error("Vui lòng điền đầy đủ thông tin", {
+        position: "top-right",
+        autoClose: 3000,
+      })
       return
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match")
+      toast.error("Mật khẩu không khớp", {
+        position: "top-right",
+        autoClose: 3000,
+      })
       return
     }
 
-    // Save user data to localStorage
-    const users = JSON.parse(localStorage.getItem('users') || '[]')
-    
-    // Check if username already exists
-    if (users.some(user => user.username === formData.username)) {
-      setError("Username already exists")
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Email không hợp lệ", {
+        position: "top-right",
+        autoClose: 3000,
+      })
       return
     }
 
-    // Add new user
-    users.push({
-      username: formData.username,
-      email: formData.email,
-      password: formData.password
-    })
-    
-    localStorage.setItem('users', JSON.stringify(users))
+    // Validate password strength
+    if (formData.password.length < 6) {
+      toast.error("Mật khẩu phải có ít nhất 6 ký tự", {
+        position: "top-right",
+        autoClose: 3000,
+      })
+      return
+    }
 
-    setError("")
-    setSuccess("Registration successful! Redirecting to login...")
+    setIsLoading(true)
 
-    // Redirect to login after a delay
+    // Giả lập độ trễ mạng
     setTimeout(() => {
-      navigate("/login")
-    }, 2000)
+      // Save user data to localStorage
+      const users = JSON.parse(localStorage.getItem('users') || '[]')
+      
+      // Check if username already exists
+      if (users.some(user => user.username === formData.username)) {
+        toast.error("Tên đăng nhập đã tồn tại", {
+          position: "top-right",
+          autoClose: 3000,
+        })
+        setIsLoading(false)
+        return
+      }
+
+      // Add new user
+      users.push({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password
+      })
+      
+      localStorage.setItem('users', JSON.stringify(users))
+
+      toast.success("Đăng ký thành công! Đang chuyển hướng đến trang đăng nhập...", {
+        position: "top-right",
+        autoClose: 2000,
+      })
+
+      // Redirect to login after a delay
+      setTimeout(() => {
+        navigate("/login")
+      }, 2000)
+    }, 800)
   }
 
   return (
-    <div className="register-form-container">
+    <motion.div 
+      className="register-form-container"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <form className="register-form" onSubmit={handleSubmit}>
-        <h2>Create an Account</h2>
-
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">{success}</div>}
+        <h2>Tạo Tài Khoản</h2>
 
         <div className="form-group">
-          <label htmlFor="username">Username</label>
+          <label htmlFor="username">Tên đăng nhập</label>
           <input
             type="text"
             id="username"
             name="username"
             value={formData.username}
             onChange={handleChange}
-            placeholder="Choose a username"
+            placeholder="Chọn tên đăng nhập"
+            autoComplete="username"
+            className="focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -92,43 +134,54 @@ const RegisterForm = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="Enter your email"
+            placeholder="Nhập email của bạn"
+            autoComplete="email"
+            className="focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password">Mật khẩu</label>
           <input
             type="password"
             id="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
-            placeholder="Create a password"
+            placeholder="Tạo mật khẩu"
+            autoComplete="new-password"
+            className="focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="confirmPassword">Confirm Password</label>
+          <label htmlFor="confirmPassword">Xác nhận Mật khẩu</label>
           <input
             type="password"
             id="confirmPassword"
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
-            placeholder="Confirm your password"
+            placeholder="Xác nhận mật khẩu của bạn"
+            autoComplete="new-password"
+            className="focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        <button type="submit" className="btn btn-primary register-submit-btn">
-          Register
-        </button>
+        <LoadingButton 
+          type="submit"
+          isLoading={isLoading}
+          loadingText="Đang đăng ký..."
+          className="btn btn-primary register-submit-btn"
+        >
+          Đăng Ký
+        </LoadingButton>
 
-        <p className="register-help-text">
-          Already have an account? <a href="/login">Login here</a>
-        </p>
+        <div className="register-help-text">
+          Đã có tài khoản? <Link to="/login">Đăng nhập tại đây</Link>
+        </div>
       </form>
-    </div>
+    </motion.div>
   )
 }
 

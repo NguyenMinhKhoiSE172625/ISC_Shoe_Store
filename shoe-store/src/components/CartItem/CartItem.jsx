@@ -6,6 +6,19 @@ const CartItem = ({ item, updateQuantity, removeFromCart }) => {
     updateQuantity(item.id, newQuantity)
   }
 
+  // Hàm định dạng giá tiền VND
+  const formatVND = (price) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(price);
+  }
+
+  // Sử dụng giá VND nếu có, nếu không thì quy đổi từ USD
+  const priceVND = item.priceVND || item.price * 23000;
+
   return (
     <div className="cart-item">
       <div className="cart-item-image">
@@ -15,7 +28,7 @@ const CartItem = ({ item, updateQuantity, removeFromCart }) => {
       <div className="cart-item-details">
         <h3 className="cart-item-name">{item.name}</h3>
         <p className="cart-item-brand">{item.brand}</p>
-        <p className="cart-item-price">${item.price.toFixed(2)}</p>
+        <p className="cart-item-price">{formatVND(priceVND)}</p>
       </div>
 
       <div className="cart-item-actions">
@@ -42,11 +55,11 @@ const CartItem = ({ item, updateQuantity, removeFromCart }) => {
         </div>
 
         <div className="cart-item-subtotal">
-          <span>Subtotal:</span> ${(item.price * item.quantity).toFixed(2)}
+          <span>Thành tiền:</span> {formatVND(priceVND * item.quantity)}
         </div>
 
         <button className="btn btn-danger remove-btn" onClick={() => removeFromCart(item.id)}>
-          Remove
+          Xóa
         </button>
       </div>
     </div>

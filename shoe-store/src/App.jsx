@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import PageTransition from "./components/PageTransition/PageTransition"
 
 // Components
@@ -106,6 +108,18 @@ function AppContent({
         </AnimatePresence>
       </main>
       <Footer />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   )
 }

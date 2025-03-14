@@ -1,0 +1,41 @@
+.loading-spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.loading-spinner {
+  border-radius: 50%;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.2);
+  will-change: transform;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.loading-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: inherit;
+  margin-left: 8px;
+}
+
+/* Hiệu ứng pulse nhẹ */
+@keyframes pulse {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+.loading-spinner-container:hover .loading-spinner {
+  animation: pulse 1.5s ease-in-out infinite;
+} 

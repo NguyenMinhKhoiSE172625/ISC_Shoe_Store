@@ -2,6 +2,9 @@
 
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
+import { motion } from "framer-motion"
+import LoadingButton from "../LoadingButton/LoadingButton"
 import "./LoginForm.css"
 
 const LoginForm = ({ onLogin }) => {
@@ -10,7 +13,7 @@ const LoginForm = ({ onLogin }) => {
     username: "",
     password: "",
   })
-  const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -22,41 +25,59 @@ const LoginForm = ({ onLogin }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    setError("")
 
     // Kiểm tra dữ liệu đầu vào
     if (!formData.username || !formData.password) {
-      setError("Please fill in all fields")
+      toast.error("Vui lòng điền đầy đủ thông tin", {
+        position: "top-right",
+        autoClose: 3000,
+      })
       return
     }
 
-    // Lấy danh sách users từ localStorage
-    const users = JSON.parse(localStorage.getItem("users") || "[]")
-    
-    // Tìm user
-    const user = users.find(
-      (u) => u.username === formData.username && u.password === formData.password
-    )
+    setIsLoading(true)
 
-    if (user) {
-      // Đăng nhập thành công
-      onLogin(user)
-      // Chuyển về trang chủ
-      navigate("/")
-    } else {
-      setError("Invalid username or password")
-    }
+    // Giả lập độ trễ mạng
+    setTimeout(() => {
+      // Lấy danh sách users từ localStorage
+      const users = JSON.parse(localStorage.getItem("users") || "[]")
+      
+      // Tìm user
+      const user = users.find(
+        (u) => u.username === formData.username && u.password === formData.password
+      )
+
+      if (user) {
+        // Đăng nhập thành công
+        toast.success("Đăng nhập thành công!", {
+          position: "top-right",
+          autoClose: 2000,
+        })
+        onLogin(user)
+        // Chuyển về trang chủ
+        navigate("/")
+      } else {
+        toast.error("Tên đăng nhập hoặc mật khẩu không đúng", {
+          position: "top-right",
+          autoClose: 3000,
+        })
+        setIsLoading(false)
+      }
+    }, 800)
   }
 
   return (
-    <div className="login-form-container">
+    <motion.div 
+      className="login-form-container"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Welcome Back</h2>
-
-        {error && <div className="error-message">{error}</div>}
+        <h2>Chào Mừng Trở Lại</h2>
 
         <div className="form-group">
-          <label htmlFor="username">Username</label>
+          <label htmlFor="username">Tên đăng nhập</label>
           <input
             type="text"
             id="username"
@@ -64,11 +85,13 @@ const LoginForm = ({ onLogin }) => {
             value={formData.username}
             onChange={handleChange}
             required
+            autoComplete="username"
+            className="focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password">Mật khẩu</label>
           <input
             type="password"
             id="password"
@@ -76,19 +99,26 @@ const LoginForm = ({ onLogin }) => {
             value={formData.password}
             onChange={handleChange}
             required
+            autoComplete="current-password"
+            className="focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        <button type="submit" className="btn btn-primary login-submit-btn">
-          Login
-        </button>
+        <LoadingButton 
+          type="submit"
+          isLoading={isLoading}
+          loadingText="Đang đăng nhập..."
+          className="btn btn-primary login-submit-btn"
+        >
+          Đăng Nhập
+        </LoadingButton>
 
         <div className="login-help-text">
-          Don't have an account?{" "}
-          <Link to="/register">Register here</Link>
+          Chưa có tài khoản?{" "}
+          <Link to="/register">Đăng ký tại đây</Link>
         </div>
       </form>
-    </div>
+    </motion.div>
   )
 }
 
