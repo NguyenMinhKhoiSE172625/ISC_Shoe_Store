@@ -1,15 +1,18 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import PageTransition from "./components/PageTransition/PageTransition"
+import ProtectedStaffRoute from './components/ProtectedStaffRoute/ProtectedStaffRoute'
+import { USER_ROLES } from './constants/userRoles'
 
 // Components
 import Header from "./components/Header/Header"
 import Footer from "./components/Footer/Footer"
+import StaffOrderManagement from './components/StaffOrderManagement/StaffOrderManagement'
 
 // Pages
 import HomePage from "./pages/HomePage/HomePage"
@@ -19,6 +22,7 @@ import LoginPage from "./pages/LoginPage/LoginPage"
 import RegisterPage from "./pages/RegisterPage/RegisterPage"
 import CartPage from "./pages/CartPage/CartPage"
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage"
+import OrderTracking from './pages/OrderTracking/OrderTracking'
 
 // Styles
 import "./App.css"
@@ -104,6 +108,15 @@ function AppContent({
                 </PageTransition>
               } 
             />
+            <Route path="/orders" element={<OrderTracking />} />
+            <Route 
+              path="/staff/orders" 
+              element={
+                <ProtectedStaffRoute>
+                  <StaffOrderManagement />
+                </ProtectedStaffRoute>
+              } 
+            />
           </Routes>
         </AnimatePresence>
       </main>
@@ -133,11 +146,13 @@ function App() {
   const handleLogin = (userData) => {
     setIsLoggedIn(true)
     setUser(userData)
+    localStorage.setItem('currentUser', JSON.stringify(userData))
   }
 
   const handleLogout = () => {
     setIsLoggedIn(false)
     setUser(null)
+    localStorage.removeItem('currentUser')
   }
 
   const addToCart = (product) => {
@@ -166,6 +181,15 @@ function App() {
   const clearCart = () => {
     setCart([])
   }
+
+  useEffect(() => {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+      const userData = JSON.parse(currentUser);
+      setUser(userData);
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   return (
     <Router>

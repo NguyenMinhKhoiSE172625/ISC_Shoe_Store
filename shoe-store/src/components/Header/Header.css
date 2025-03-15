@@ -99,4 +99,53 @@
     font-weight: 500;
   }
   
+  .icon-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .icon-btn {
+    position: relative;
+    color: #333;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+  
+  .icon-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+  
+  .track-order-btn {
+    color: #4CAF50;
+  }
+  
+  .cart-btn {
+    color: #333;
+  }
+  
+  .cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff4444;
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+  
+  .orders-link {
+    margin-left: 10px;
+    color: #333;
+  }
+  
+  .orders-icon {
+    font-size: 1.2rem;
+  }
+  
   

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faShoppingCart } from "@fortawesome/free-solid-svg-icons"
+import { faShoppingCart, faTruck } from "@fortawesome/free-solid-svg-icons"
 import "./Header.css"
 
 const Header = ({ isLoggedIn, user, onLogout, cartItemCount }) => {
@@ -20,22 +20,41 @@ const Header = ({ isLoggedIn, user, onLogout, cartItemCount }) => {
                 Trang Chủ
               </Link>
             </li>
-            <li className="nav-item">
-              <Link to="/products" className="nav-link">
-                Sản Phẩm
-              </Link>
-            </li>
+            {user?.role === 'staff' ? (
+              <li className="nav-item">
+                <Link to="/staff/orders" className="nav-link">
+                  Quản lý đơn hàng
+                </Link>
+              </li>
+            ) : (
+              <>
+                <li className="nav-item">
+                  <Link to="/products" className="nav-link">
+                    Sản Phẩm
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/orders" className="nav-link">
+                    Đơn hàng của tôi
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
 
         <div className="user-actions">
           {isLoggedIn ? (
             <>
-              <span className="welcome-text">Xin chào, {user.username}!</span>
-              <Link to="/cart" className="cart-link">
-                <FontAwesomeIcon icon={faShoppingCart} className="cart-icon" />
-                <span className="cart-count">{cartItemCount}</span>
-              </Link>
+              <span className="welcome-text">
+                Xin chào, {user.username} ({user.role === 'staff' ? 'Nhân viên' : 'Khách hàng'})!
+              </span>
+              {user.role !== 'staff' && (
+                <Link to="/cart" className="cart-link">
+                  <FontAwesomeIcon icon={faShoppingCart} className="cart-icon" />
+                  <span className="cart-count">{cartItemCount}</span>
+                </Link>
+              )}
               <button className="btn btn-secondary logout-btn" onClick={onLogout}>
                 Đăng Xuất
               </button>

@@ -6,6 +6,7 @@ import { toast } from "react-toastify"
 import { motion } from "framer-motion"
 import LoadingButton from "../LoadingButton/LoadingButton"
 import "./LoginForm.css"
+import { USER_ROLES } from "../../constants/userRoles"
 
 const LoginForm = ({ onLogin }) => {
   const navigate = useNavigate()
@@ -54,8 +55,13 @@ const LoginForm = ({ onLogin }) => {
           autoClose: 2000,
         })
         onLogin(user)
-        // Chuyển về trang chủ
-        navigate("/")
+        
+        // Điều hướng dựa vào role
+        if (user.role === USER_ROLES.STAFF) {
+          navigate("/staff/orders")
+        } else {
+          navigate("/")
+        }
       } else {
         toast.error("Tên đăng nhập hoặc mật khẩu không đúng", {
           position: "top-right",

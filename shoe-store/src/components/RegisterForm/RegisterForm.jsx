@@ -6,6 +6,7 @@ import { toast } from "react-toastify"
 import { motion } from "framer-motion"
 import LoadingButton from "../LoadingButton/LoadingButton"
 import "./RegisterForm.css"
+import { USER_ROLES } from "../../constants/userRoles"
 
 const RegisterForm = () => {
   const navigate = useNavigate()
@@ -14,6 +15,7 @@ const RegisterForm = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    role: USER_ROLES.CUSTOMER
   })
   const [isLoading, setIsLoading] = useState(false)
 
@@ -85,7 +87,8 @@ const RegisterForm = () => {
       users.push({
         username: formData.username,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
+        role: formData.role
       })
       
       localStorage.setItem('users', JSON.stringify(users))
@@ -166,6 +169,20 @@ const RegisterForm = () => {
             autoComplete="new-password"
             className="focus:ring-2 focus:ring-blue-500"
           />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="role">Vai trò</label>
+          <select
+            id="role"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            className="focus:ring-2 focus:ring-blue-500"
+          >
+            <option value={USER_ROLES.CUSTOMER}>Khách hàng</option>
+            <option value={USER_ROLES.STAFF}>Nhân viên</option>
+          </select>
         </div>
 
         <LoadingButton 

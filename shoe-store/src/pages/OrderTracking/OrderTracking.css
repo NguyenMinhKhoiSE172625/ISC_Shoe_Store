@@ -1,0 +1,107 @@
+.order-tracking-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.order-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.tracking-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.status-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.step-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.status-step.active .step-icon {
+  background: #4CAF50;
+  color: white;
+}
+
+.status-step.completed .step-icon {
+  background: #4CAF50;
+  color: white;
+}
+
+.status-line {
+  height: 2px;
+  background: #f0f0f0;
+  flex: 1;
+  margin: 0 10px;
+  position: relative;
+  top: -20px;
+  z-index: 0;
+}
+
+.step-label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.status-step.active .step-label {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.order-items {
+  margin-top: 1.5rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+
+/* Header button styles */
+.track-order-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #4CAF50;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.track-order-btn:hover {
+  background: #45a049;
+} 
