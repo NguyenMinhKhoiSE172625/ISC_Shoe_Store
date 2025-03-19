@@ -1,10 +1,16 @@
 import { Link } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import { useState } from "react"
+import { useAuth } from "../../contexts/AuthContext"
+import { useCart } from "../../contexts/CartContext"
+import { useProducts } from "../../contexts/ProductContext"
 import "./ProductCard.css"
 
-const ProductCard = ({ product, isLoggedIn, addToCart }) => {
+const ProductCard = ({ product }) => {
   const [isAnimating, setIsAnimating] = useState(false)
+  const { isLoggedIn } = useAuth()
+  const { addToCart } = useCart()
+  const { formatVND } = useProducts()
 
   const handleAddToCart = async (e) => {
     e.preventDefault()
@@ -13,7 +19,7 @@ const ProductCard = ({ product, isLoggedIn, addToCart }) => {
     if (isAnimating) return // Prevent multiple clicks during animation
     
     setIsAnimating(true)
-    addToCart(product)
+    await addToCart(product)
     
     // Reset animation after completion
     setTimeout(() => {
@@ -21,19 +27,9 @@ const ProductCard = ({ product, isLoggedIn, addToCart }) => {
     }, 1500)
   }
 
-  // Hàm định dạng giá tiền VND
-  const formatVND = (price) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(price);
-  }
-
   return (
     <div className="product-card">
-      <Link to={`/products/${product.id}`} className="product-link">
+      <Link to={`/products/${product._id}`} className="product-link">
         <div className="product-image">
           <img src={product.image || "/placeholder.svg"} alt={product.name} />
         </div>

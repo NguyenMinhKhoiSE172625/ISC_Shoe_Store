@@ -3,19 +3,17 @@ import { motion } from "framer-motion"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faShoppingBag, faArrowLeft, faTruck, faShieldAlt } from "@fortawesome/free-solid-svg-icons"
 import CartItem from "../../components/CartItem/CartItem"
+import { useCart } from "../../contexts/CartContext"
+import { useAuth } from "../../contexts/AuthContext"
+import { useProducts } from "../../contexts/ProductContext"
 import "./CartPage.css"
 
-const CartPage = ({ cart, updateQuantity, removeFromCart, isLoggedIn }) => {
-  const total = cart.reduce((sum, item) => sum + (item.priceVND || item.price * 23000) * item.quantity, 0)
-
-  const formatVND = (price) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(price);
-  }
+const CartPage = () => {
+  const { isLoggedIn } = useAuth()
+  const { cart, updateQuantity, removeFromCart, getCartTotal } = useCart()
+  const { formatVND } = useProducts()
+  
+  const total = getCartTotal()
 
   // Animation variants
   const containerVariants = {
@@ -92,8 +90,21 @@ const CartPage = ({ cart, updateQuantity, removeFromCart, isLoggedIn }) => {
             animate="visible"
           >
             {cart.map((item) => (
-              <motion.div key={item.id} variants={itemVariants}>
-                <CartItem item={item} updateQuantity={updateQuantity} removeFromCart={removeFromCart} />
+              <motion.div key={item._id} variants={itemVariants}>
+                <CartItem 
+                  item={{
+                    _id: item._id,
+                    name: item.product?.name,
+                    brand: item.product?.brand,
+                    image: item.product?.image,
+                    price: item.product?.price,
+                    priceVND: item.product?.priceVND || item.price,
+                    quantity: item.quantity,
+                    size: item.size
+                  }} 
+                  updateQuantity={updateQuantity} 
+                  removeFromCart={removeFromCart} 
+                />
               </motion.div>
             ))}
           </motion.div>

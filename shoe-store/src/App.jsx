@@ -1,11 +1,15 @@
 "use client"
 
-import { useState } from "react"
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import PageTransition from "./components/PageTransition/PageTransition"
+
+// Context Providers
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { CartProvider, useCart } from './contexts/CartContext'
+import { ProductProvider } from './contexts/ProductContext'
 
 // Components
 import Header from "./components/Header/Header"
@@ -23,27 +27,29 @@ import CheckoutPage from "./pages/CheckoutPage/CheckoutPage"
 // Styles
 import "./App.css"
 
-// Tạo một component con để sử dụng useLocation
-function AppContent({ 
-  isLoggedIn, 
-  user, 
-  handleLogin,
-  handleLogout,
-  cart, 
-  addToCart, 
-  updateQuantity,
-  removeFromCart,
-  clearCart 
-}) {
+// Tạo một component con để sử dụng context hooks
+function AppContent() {
   const location = useLocation()
+  const { isLoggedIn, user, logout } = useAuth()
+  const { cart, addToCart, updateQuantity, removeFromCart, clearCart, getCartCount } = useCart()
+  
+  // Safe cart count calculation
+  const safeCartCount = () => {
+    try {
+      return getCartCount() || 0;
+    } catch (error) {
+      console.error('Error getting cart count:', error);
+      return 0;
+    }
+  };
   
   return (
     <div className="app">
       <Header 
         isLoggedIn={isLoggedIn}
         user={user}
-        onLogout={handleLogout}
-        cartItemCount={cart.reduce((total, item) => total + item.quantity, 0)}
+        onLogout={logout}
+        cartItemCount={safeCartCount()}
       />
       <main className="main-content">
         <AnimatePresence mode="wait">
@@ -60,7 +66,7 @@ function AppContent({
               path="/products" 
               element={
                 <PageTransition>
-                  <ProductsPage isLoggedIn={isLoggedIn} addToCart={addToCart} />
+                  <ProductsPage />
                 </PageTransition>
               } 
             />
@@ -68,7 +74,7 @@ function AppContent({
               path="/products/:id" 
               element={
                 <PageTransition>
-                  <ProductDetailPage isLoggedIn={isLoggedIn} addToCart={addToCart} />
+                  <ProductDetailPage />
                 </PageTransition>
               } 
             />
@@ -76,7 +82,7 @@ function AppContent({
               path="/cart" 
               element={
                 <PageTransition>
-                  <CartPage cart={cart} updateQuantity={updateQuantity} removeFromCart={removeFromCart} isLoggedIn={isLoggedIn} />
+                  <CartPage />
                 </PageTransition>
               } 
             />
@@ -84,7 +90,7 @@ function AppContent({
               path="/login" 
               element={
                 <PageTransition>
-                  <LoginPage onLogin={handleLogin} />
+                  <LoginPage />
                 </PageTransition>
               } 
             />
@@ -99,9 +105,13 @@ function AppContent({
             <Route 
               path="/checkout" 
               element={
-                <PageTransition>
-                  <CheckoutPage cart={cart} clearCart={clearCart} />
-                </PageTransition>
+                isLoggedIn ? (
+                  <PageTransition>
+                    <CheckoutPage />
+                  </PageTransition>
+                ) : (
+                  <Navigate to="/login" state={{ from: '/checkout' }} />
+                )
               } 
             />
           </Routes>
@@ -118,68 +128,27 @@ function AppContent({
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
+        theme="colored"
+        style={{ 
+          fontSize: '0.9rem',
+          zIndex: 9999
+        }}
       />
     </div>
   )
 }
 
-// Component App chính
+// App component with contexts
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [user, setUser] = useState(null)
-  const [cart, setCart] = useState([])
-
-  const handleLogin = (userData) => {
-    setIsLoggedIn(true)
-    setUser(userData)
-  }
-
-  const handleLogout = () => {
-    setIsLoggedIn(false)
-    setUser(null)
-  }
-
-  const addToCart = (product) => {
-    const existingItem = cart.find((item) => item.id === product.id)
-
-    if (existingItem) {
-      setCart(cart.map((item) => (item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item)))
-    } else {
-      setCart([...cart, { ...product, quantity: 1 }])
-    }
-  }
-
-  const removeFromCart = (productId) => {
-    setCart(cart.filter((item) => item.id !== productId))
-  }
-
-  const updateQuantity = (productId, quantity) => {
-    if (quantity <= 0) {
-      removeFromCart(productId)
-      return
-    }
-
-    setCart(cart.map((item) => (item.id === productId ? { ...item, quantity } : item)))
-  }
-
-  const clearCart = () => {
-    setCart([])
-  }
-
   return (
     <Router>
-      <AppContent 
-        isLoggedIn={isLoggedIn}
-        user={user}
-        handleLogin={handleLogin}
-        handleLogout={handleLogout}
-        cart={cart}
-        addToCart={addToCart}
-        updateQuantity={updateQuantity}
-        removeFromCart={removeFromCart}
-        clearCart={clearCart}
-      />
+      <AuthProvider>
+        <ProductProvider>
+          <CartProvider>
+            <AppContent />
+          </CartProvider>
+        </ProductProvider>
+      </AuthProvider>
     </Router>
   )
 }

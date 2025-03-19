@@ -3,7 +3,7 @@ import "./CartItem.css"
 const CartItem = ({ item, updateQuantity, removeFromCart }) => {
   const handleQuantityChange = (e) => {
     const newQuantity = Number.parseInt(e.target.value)
-    updateQuantity(item.id, newQuantity)
+    updateQuantity(item._id, newQuantity)
   }
 
   // Hàm định dạng giá tiền VND
@@ -28,6 +28,11 @@ const CartItem = ({ item, updateQuantity, removeFromCart }) => {
       <div className="cart-item-details">
         <h3 className="cart-item-name">{item.name}</h3>
         <p className="cart-item-brand">{item.brand}</p>
+        {item.size && (
+          <p className="cart-item-size">
+            <strong>Size:</strong> {item.size}
+          </p>
+        )}
         <p className="cart-item-price">{formatVND(priceVND)}</p>
       </div>
 
@@ -35,7 +40,7 @@ const CartItem = ({ item, updateQuantity, removeFromCart }) => {
         <div className="quantity-control">
           <button
             className="quantity-btn"
-            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+            onClick={() => updateQuantity(item._id, item.quantity - 1)}
             disabled={item.quantity <= 1}
           >
             -
@@ -49,7 +54,7 @@ const CartItem = ({ item, updateQuantity, removeFromCart }) => {
             className="quantity-input"
           />
 
-          <button className="quantity-btn" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+          <button className="quantity-btn" onClick={() => updateQuantity(item._id, item.quantity + 1)}>
             +
           </button>
         </div>
@@ -58,7 +63,7 @@ const CartItem = ({ item, updateQuantity, removeFromCart }) => {
           <span>Thành tiền:</span> {formatVND(priceVND * item.quantity)}
         </div>
 
-        <button className="btn btn-danger remove-btn" onClick={() => removeFromCart(item.id)}>
+        <button className="btn btn-danger remove-btn" onClick={() => removeFromCart(item._id)}>
           Xóa
         </button>
       </div>
