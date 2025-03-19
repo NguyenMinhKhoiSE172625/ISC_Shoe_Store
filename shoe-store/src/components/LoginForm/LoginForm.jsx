@@ -1,19 +1,29 @@
 "use client"
 
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useLocation } from "react-router-dom"
 import { toast } from "react-toastify"
 import { motion } from "framer-motion"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faEnvelope, faLock, faExclamationCircle } from "@fortawesome/free-solid-svg-icons"
+import { useAuth } from "../../contexts/AuthContext"
 import LoadingButton from "../LoadingButton/LoadingButton"
 import "./LoginForm.css"
 
-const LoginForm = ({ onLogin }) => {
+const LoginForm = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const { login, loading } = useAuth()
+  
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
   })
-  const [isLoading, setIsLoading] = useState(false)
+  
+  const [rememberMe, setRememberMe] = useState(false)
+
+  // Redirect to previous page or home after login
+  const from = location.state?.from || "/"
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -23,11 +33,11 @@ const LoginForm = ({ onLogin }) => {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     // Kiểm tra dữ liệu đầu vào
-    if (!formData.username || !formData.password) {
+    if (!formData.email || !formData.password) {
       toast.error("Vui lòng điền đầy đủ thông tin", {
         position: "top-right",
         autoClose: 3000,
@@ -35,59 +45,49 @@ const LoginForm = ({ onLogin }) => {
       return
     }
 
-    setIsLoading(true)
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Email không hợp lệ", {
+        position: "top-right",
+        autoClose: 3000,
+      })
+      return
+    }
 
-    // Giả lập độ trễ mạng
-    setTimeout(() => {
-      // Lấy danh sách users từ localStorage
-      const users = JSON.parse(localStorage.getItem("users") || "[]")
-      
-      // Tìm user
-      const user = users.find(
-        (u) => u.username === formData.username && u.password === formData.password
-      )
+    // Thực hiện đăng nhập qua API
+    const success = await login({
+      email: formData.email,
+      password: formData.password,
+    })
 
-      if (user) {
-        // Đăng nhập thành công
-        toast.success("Đăng nhập thành công!", {
-          position: "top-right",
-          autoClose: 2000,
-        })
-        onLogin(user)
-        // Chuyển về trang chủ
-        navigate("/")
-      } else {
-        toast.error("Tên đăng nhập hoặc mật khẩu không đúng", {
-          position: "top-right",
-          autoClose: 3000,
-        })
-        setIsLoading(false)
-      }
-    }, 800)
+    if (success) {
+      // Chuyển về trang trước đó hoặc trang chủ
+      navigate(from)
+    }
   }
 
   return (
-    <motion.div 
-      className="login-form-container"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="login-form-container">
       <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Chào Mừng Trở Lại</h2>
+        <div className="login-form-header">
+          <h2>Chào Mừng Trở Lại</h2>
+          <p>Hãy đăng nhập để truy cập tài khoản và tiếp tục mua sắm</p>
+        </div>
 
         <div className="form-group">
-          <label htmlFor="username">Tên đăng nhập</label>
+          <label htmlFor="email">Email</label>
           <input
-            type="text"
-            id="username"
-            name="username"
-            value={formData.username}
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
             onChange={handleChange}
             required
-            autoComplete="username"
-            className="focus:ring-2 focus:ring-blue-500"
+            autoComplete="email"
+            placeholder="Nhập địa chỉ email của bạn"
           />
+          <FontAwesomeIcon icon={faEnvelope} className="input-icon" />
         </div>
 
         <div className="form-group">
@@ -100,25 +100,41 @@ const LoginForm = ({ onLogin }) => {
             onChange={handleChange}
             required
             autoComplete="current-password"
-            className="focus:ring-2 focus:ring-blue-500"
+            placeholder="Nhập mật khẩu của bạn"
           />
+          <FontAwesomeIcon icon={faLock} className="input-icon" />
+        </div>
+
+        <div className="login-options">
+          <div className="remember-me">
+            <input 
+              type="checkbox" 
+              id="remember-me" 
+              checked={rememberMe}
+              onChange={() => setRememberMe(!rememberMe)}
+            />
+            <label htmlFor="remember-me">Ghi nhớ đăng nhập</label>
+          </div>
+          <Link to="/forgot-password" className="forgot-password">
+            Quên mật khẩu?
+          </Link>
         </div>
 
         <LoadingButton 
           type="submit"
-          isLoading={isLoading}
+          isLoading={loading}
           loadingText="Đang đăng nhập..."
-          className="btn btn-primary login-submit-btn"
+          className="login-submit-btn"
         >
           Đăng Nhập
         </LoadingButton>
 
         <div className="login-help-text">
-          Chưa có tài khoản?{" "}
+          Chưa có tài khoản?
           <Link to="/register">Đăng ký tại đây</Link>
         </div>
       </form>
-    </motion.div>
+    </div>
   )
 }
 
