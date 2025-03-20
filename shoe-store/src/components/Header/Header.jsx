@@ -1,12 +1,23 @@
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+<<<<<<< HEAD
 import { faShoppingCart, faTruck } from "@fortawesome/free-solid-svg-icons"
+=======
+import { faShoppingCart, faVenusMars, faHome, faShop } from "@fortawesome/free-solid-svg-icons"
+>>>>>>> Tphat
 import "./Header.css"
 
-const Header = ({ isLoggedIn, user, onLogout, cartItemCount }) => {
+const Header = ({ isLoggedIn, user, onLogout, cartItemCount = 0 }) => {
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
+  const isProductsPage = location.pathname === "/products";
+  
+  // Safe way to get username
+  const displayName = user?.name || "khách";
+  
   return (
     <header className="header">
-      <div className="container header-container">
+      <div className="header-container">
         <div className="logo">
           <Link to="/">
             <h1>Anh Bán Giày</h1>
@@ -16,10 +27,12 @@ const Header = ({ isLoggedIn, user, onLogout, cartItemCount }) => {
         <nav className="nav">
           <ul className="nav-list">
             <li className="nav-item">
-              <Link to="/" className="nav-link">
-                Trang Chủ
+              <Link to="/" className={`nav-link ${isHomePage ? 'active' : ''}`}>
+                <FontAwesomeIcon icon={faHome} className="nav-icon" /> 
+                <span>Trang Chủ</span>
               </Link>
             </li>
+<<<<<<< HEAD
             {user?.role === 'staff' ? (
               <li className="nav-item">
                 <Link to="/staff/orders" className="nav-link">
@@ -40,12 +53,21 @@ const Header = ({ isLoggedIn, user, onLogout, cartItemCount }) => {
                 </li>
               </>
             )}
+=======
+            <li className="nav-item">
+              <Link to="/products" className={`nav-link ${isProductsPage ? 'active' : ''}`}>
+                <FontAwesomeIcon icon={faShop} className="nav-icon" /> 
+                <span>Sản Phẩm</span>
+              </Link>
+            </li>
+>>>>>>> Tphat
           </ul>
         </nav>
 
         <div className="user-actions">
           {isLoggedIn ? (
             <>
+<<<<<<< HEAD
               <span className="welcome-text">
                 Xin chào, {user.username} ({user.role === 'staff' ? 'Nhân viên' : 'Khách hàng'})!
               </span>
@@ -56,6 +78,27 @@ const Header = ({ isLoggedIn, user, onLogout, cartItemCount }) => {
                 </Link>
               )}
               <button className="btn btn-secondary logout-btn" onClick={onLogout}>
+=======
+              <div className="welcome-text">
+                Xin chào, <span>{displayName}</span>!
+              </div>
+              
+              {isProductsPage && (
+                <span className="gender-icon">
+                  <FontAwesomeIcon icon={faVenusMars} />
+                </span>
+              )}
+              
+              <Link to="/cart" className="cart-link">
+                <FontAwesomeIcon icon={faShoppingCart} className="cart-icon" />
+                <span className="cart-count">{cartItemCount || 0}</span>
+              </Link>
+              
+              <button 
+                className="btn btn-secondary logout-btn" 
+                onClick={onLogout}
+              >
+>>>>>>> Tphat
                 Đăng Xuất
               </button>
             </>

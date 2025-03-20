@@ -61,7 +61,7 @@
   }
   
   .cart-item-name {
-    font-size: 20px;
+    font-size: 1.2rem;
     margin-bottom: 8px;
     color: #333;
     font-weight: 600;
@@ -70,14 +70,14 @@
   .cart-item-brand {
     color: #666;
     margin-bottom: 8px;
-    font-size: 15px;
+    font-size: 1.2rem;
     font-weight: 500;
   }
   
   .cart-item-price {
     font-weight: 700;
     color: #4a90e2;
-    font-size: 18px;
+    font-size: 1.2rem;
   }
   
   .cart-item-actions {
@@ -168,6 +168,12 @@
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+  }
+  
+  .cart-item-size {
+    color: #6b7280;
+    font-size: 1.2rem;
+    margin-top: 0.25rem;
   }
   
   @media (max-width: 768px) {
