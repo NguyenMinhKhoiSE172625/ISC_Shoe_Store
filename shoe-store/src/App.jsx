@@ -1,9 +1,6 @@
 "use client"
 
-<<<<<<< HEAD
 import { useState, useEffect } from "react"
-=======
->>>>>>> Tphat
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom"
 import { AnimatePresence } from "framer-motion"
 import { ToastContainer } from 'react-toastify'
@@ -157,61 +154,6 @@ function AppContent() {
 
 // App component with contexts
 function App() {
-<<<<<<< HEAD
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [user, setUser] = useState(null)
-  const [cart, setCart] = useState([])
-
-  const handleLogin = (userData) => {
-    setIsLoggedIn(true)
-    setUser(userData)
-    localStorage.setItem('currentUser', JSON.stringify(userData))
-  }
-
-  const handleLogout = () => {
-    setIsLoggedIn(false)
-    setUser(null)
-    localStorage.removeItem('currentUser')
-  }
-
-  const addToCart = (product) => {
-    const existingItem = cart.find((item) => item.id === product.id)
-
-    if (existingItem) {
-      setCart(cart.map((item) => (item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item)))
-    } else {
-      setCart([...cart, { ...product, quantity: 1 }])
-    }
-  }
-
-  const removeFromCart = (productId) => {
-    setCart(cart.filter((item) => item.id !== productId))
-  }
-
-  const updateQuantity = (productId, quantity) => {
-    if (quantity <= 0) {
-      removeFromCart(productId)
-      return
-    }
-
-    setCart(cart.map((item) => (item.id === productId ? { ...item, quantity } : item)))
-  }
-
-  const clearCart = () => {
-    setCart([])
-  }
-
-  useEffect(() => {
-    const currentUser = localStorage.getItem('currentUser');
-    if (currentUser) {
-      const userData = JSON.parse(currentUser);
-      setUser(userData);
-      setIsLoggedIn(true);
-    }
-  }, []);
-
-=======
->>>>>>> Tphat
   return (
     <Router>
       <AuthProvider>
