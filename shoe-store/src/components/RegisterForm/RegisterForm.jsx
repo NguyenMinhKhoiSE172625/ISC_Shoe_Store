@@ -18,9 +18,6 @@ const RegisterForm = () => {
     email: "",
     password: "",
     confirmPassword: "",
-<<<<<<< HEAD
-    role: USER_ROLES.CUSTOMER
-=======
     phone: "",
     address: {
       street: "",
@@ -28,7 +25,6 @@ const RegisterForm = () => {
       province: "",
       postalCode: ""
     }
->>>>>>> Tphat
   })
 
   const handleChange = (e) => {
@@ -91,39 +87,6 @@ const RegisterForm = () => {
       return
     }
 
-<<<<<<< HEAD
-    setIsLoading(true)
-
-    // Giả lập độ trễ mạng
-    setTimeout(() => {
-      // Save user data to localStorage
-      const users = JSON.parse(localStorage.getItem('users') || '[]')
-      
-      // Check if username already exists
-      if (users.some(user => user.username === formData.username)) {
-        toast.error("Tên đăng nhập đã tồn tại", {
-          position: "top-right",
-          autoClose: 3000,
-        })
-        setIsLoading(false)
-        return
-      }
-
-      // Add new user
-      users.push({
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role
-      })
-      
-      localStorage.setItem('users', JSON.stringify(users))
-
-      toast.success("Đăng ký thành công! Đang chuyển hướng đến trang đăng nhập...", {
-        position: "top-right",
-        autoClose: 2000,
-      })
-=======
     // Submit registration to API
     const success = await register({
       name: formData.name,
@@ -132,7 +95,6 @@ const RegisterForm = () => {
       phone: formData.phone,
       address: formData.address
     })
->>>>>>> Tphat
 
     if (success) {
       // Redirect to login after a delay

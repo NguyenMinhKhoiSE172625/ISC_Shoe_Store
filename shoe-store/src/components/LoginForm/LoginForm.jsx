@@ -62,35 +62,10 @@ const LoginForm = () => {
       password: formData.password,
     })
 
-<<<<<<< HEAD
-      if (user) {
-        // Đăng nhập thành công
-        toast.success("Đăng nhập thành công!", {
-          position: "top-right",
-          autoClose: 2000,
-        })
-        onLogin(user)
-        
-        // Điều hướng dựa vào role
-        if (user.role === USER_ROLES.STAFF) {
-          navigate("/staff/orders")
-        } else {
-          navigate("/")
-        }
-      } else {
-        toast.error("Tên đăng nhập hoặc mật khẩu không đúng", {
-          position: "top-right",
-          autoClose: 3000,
-        })
-        setIsLoading(false)
-      }
-    }, 800)
-=======
     if (success) {
       // Chuyển về trang trước đó hoặc trang chủ
       navigate(from)
     }
->>>>>>> Tphat
   }
 
   return (
