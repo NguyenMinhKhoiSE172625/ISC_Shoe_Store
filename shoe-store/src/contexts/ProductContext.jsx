@@ -15,7 +15,11 @@ export const ProductProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const { data } = await productsAPI.getProducts(queryString);
+      const finalQueryString = queryString.includes('limit') 
+        ? queryString 
+        : (queryString ? `${queryString}&limit=1000` : '?limit=1000');
+      
+      const { data } = await productsAPI.getProducts(finalQueryString);
       setProducts(data || []);
     } catch (error) {
       console.error('Error fetching products:', error);
