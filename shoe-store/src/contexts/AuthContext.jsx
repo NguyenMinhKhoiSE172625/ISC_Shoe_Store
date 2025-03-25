@@ -72,8 +72,23 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const { data } = await authAPI.login(credentials);
+      
+      // Đảm bảo set user trước khi set isLoggedIn
       setUser(data);
       setIsLoggedIn(true);
+      
+      // Kiểm tra và cập nhật thông tin profile đầy đủ
+      try {
+        const profileData = await authAPI.getProfile();
+        if (profileData.data) {
+          // Cập nhật lại user với dữ liệu đầy đủ từ profile nếu có
+          setUser(profileData.data);
+        }
+      } catch (profileError) {
+        console.error('Không thể lấy thông tin profile đầy đủ:', profileError);
+        // Vẫn giữ thông tin user từ login nếu không lấy được profile
+      }
+      
       toast.success('Đăng nhập thành công!', {
         position: "top-right",
         autoClose: 3000,
@@ -155,6 +170,10 @@ export const AuthProvider = ({ children }) => {
       toast.success('Đăng xuất thành công!');
     } catch (error) {
       console.error('Logout error:', error);
+      // Vẫn thực hiện đăng xuất ở phía client ngay cả khi API gặp lỗi
+      setUser(null);
+      setIsLoggedIn(false);
+      toast.success('Đã đăng xuất khỏi phiên hiện tại');
     } finally {
       setLoading(false);
     }

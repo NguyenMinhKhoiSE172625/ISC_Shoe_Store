@@ -1,0 +1,369 @@
+.order-details-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.order-details-page.loading,
+.order-details-page.error,
+.order-details-page.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 1rem;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.back-button:hover {
+  color: #0d6efd;
+}
+
+.icon-left {
+  margin-right: 8px;
+}
+
+.order-status-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
+}
+
+.status-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.status-badge, .payment-badge {
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.status-badge.pending {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.status-badge.processing {
+  background-color: #cce5ff;
+  color: #0d6efd;
+}
+
+.status-badge.shipped {
+  background-color: #fff3cd;
+  color: #ffc107;
+}
+
+.status-badge.delivered {
+  background-color: #d1e7dd;
+  color: #198754;
+}
+
+.status-badge.cancelled {
+  background-color: #f8d7da;
+  color: #dc3545;
+}
+
+.payment-status {
+  margin-bottom: 1.5rem;
+}
+
+.payment-status h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.payment-badge.paid {
+  background-color: #d1e7dd;
+  color: #198754;
+}
+
+.payment-badge.unpaid {
+  background-color: #f8d7da;
+  color: #dc3545;
+}
+
+.paid-time {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.payment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.pay-now-button {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.check-payment-button {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cancel-order {
+  margin-top: 1rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}
+
+.cancel-order-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.order-info-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .order-info-section {
+    grid-template-columns: 2fr 1fr;
+  }
+  
+  .order-summary {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
+
+.order-items, .shipping-info, .order-summary {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.order-items h2, .shipping-info h2, .order-summary h2 {
+  margin-top: 0;
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.item-name h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.item-name p {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.item-quantity {
+  font-weight: 500;
+}
+
+.item-price {
+  text-align: right;
+  font-weight: 500;
+}
+
+.unit-price {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  color: #666;
+  font-weight: normal;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.summary-item.total {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+/* Admin actions */
+.admin-status-actions {
+  margin-top: 15px;
+}
+
+.admin-payment-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.status-select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.status-select:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.status-select option {
+  padding: 8px;
+}
+
+.status-select option[value="pending"] {
+  background-color: #ffedd5;
+  color: #f59e0b;
+}
+
+.status-select option[value="processing"] {
+  background-color: #e0f2fe;
+  color: #0ea5e9;
+}
+
+.status-select option[value="shipped"] {
+  background-color: #e0e7ff;
+  color: #6366f1;
+}
+
+.status-select option[value="delivered"] {
+  background-color: #dcfce7;
+  color: #22c55e;
+}
+
+.status-select option[value="paid"] {
+  background-color: #ecfdf5;
+  color: #10b981;
+}
+
+.status-select option[value="cancelled"] {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.payment-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: none;
+}
+
+.payment-toggle-btn.mark-paid {
+  background-color: #10b981;
+  color: white;
+}
+
+.payment-toggle-btn.mark-unpaid {
+  background-color: #ef4444;
+  color: white;
+}
+
+.payment-toggle-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.payment-toggle-btn:active {
+  transform: translateY(0);
+}
+
+.payment-toggle-btn:disabled {
+  background-color: #cbd5e1;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Thêm hoặc cập nhật style cho status badge */
+.status-badge[class*="paid"] {
+  background-color: #ecfdf5;
+  color: #10b981;
+  border: 1px solid #10b981;
+} 
