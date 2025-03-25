@@ -351,4 +351,162 @@
     width: 50px;
     height: 50px;
   }
+}
+
+/* Thêm style cho phân trang */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px auto;
+  padding: 0;
+  max-width: 800px;
+  width: 100%;
+  position: relative;
+}
+
+.pagination-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: transparent;
+  color: #4a5568;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: absolute;
+  left: 0;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: #f1f5f9;
+  color: #2a7edd;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-numbers {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.pagination-number {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: transparent;
+  color: #4a5568;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.pagination-number:hover {
+  background-color: #f1f5f9;
+}
+
+.pagination-number.active {
+  background-color: #2a7edd;
+  color: #fdfdfd;
+  font-weight: 600;
+}
+
+.pagination-ellipsis {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 40px;
+  color: #4a5568;
+  font-size: 16px;
+}
+
+.pagination-next {
+  position: absolute;
+  right: 0;
+}
+
+.pagination-next-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  border: none;
+  background-color: transparent;
+  color: #000;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination-next-button:hover {
+  transform: translateX(3px);
+}
+
+.pagination-info {
+  text-align: center;
+  margin: 15px 0 30px;
+  font-size: 14px;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .pagination {
+    padding: 0 50px;
+    max-width: 100%;
+  }
+  
+  .pagination-button,
+  .pagination-number {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+  }
+  
+  .pagination-next-button {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .pagination {
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 15px;
+  }
+  
+  .pagination-button {
+    position: static;
+    order: 1;
+  }
+  
+  .pagination-numbers {
+    order: 3;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .pagination-next {
+    position: static;
+    order: 2;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
 } 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useProducts } from "../../contexts/ProductContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faEdit, faTrash, faSpinner, faTimes, faCheck, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faEdit, faTrash, faSpinner, faTimes, faCheck, faSearch, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import "./AdminProductsPage.css";
 
 const AdminProductsPage = () => {
@@ -11,7 +11,6 @@ const AdminProductsPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     brand: "",
-    price: "",
     priceVND: "",
     description: "",
     image: "",
@@ -27,31 +26,75 @@ const AdminProductsPage = () => {
   const [availableSizes, setAvailableSizes] = useState([
     35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45
   ]);
+  
+  // Phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(8); // Hiển thị 8 sản phẩm mỗi trang cho admin
+  
+  // Tính toán sản phẩm trên trang hiện tại
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  
+  // Thay đổi trang
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  
+  // Chuyển tới trang trước
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+  
+  // Chuyển tới trang sau
+  const goToNextPage = () => {
+    if (currentPage < Math.ceil(filteredProducts.length / productsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   // Update filtered products when products or search term changes
   useEffect(() => {
-    if (searchTerm) {
-      const lowercaseSearch = searchTerm.toLowerCase();
-      const filtered = products.filter(product => 
-        product.name.toLowerCase().includes(lowercaseSearch) || 
-        product.brand.toLowerCase().includes(lowercaseSearch)
-      );
-      setFilteredProducts(filtered);
-    } else {
-      setFilteredProducts(products);
+    const loadProducts = async () => {
+      try {
+        await fetchProducts("?page=1&limit=100");
+      } catch (error) {
+        console.error("Lỗi khi tải sản phẩm:", error);
+      }
+    };
+    
+    // Tải sản phẩm khi component mount
+    loadProducts();
+  }, [fetchProducts]);
+
+  useEffect(() => {
+    if (products && products.length > 0) {
+      if (searchTerm) {
+        const lowercaseSearch = searchTerm.toLowerCase();
+        const filtered = products.filter(product => 
+          product.name.toLowerCase().includes(lowercaseSearch) || 
+          product.brand.toLowerCase().includes(lowercaseSearch)
+        );
+        setFilteredProducts(filtered);
+      } else {
+        setFilteredProducts(products);
+      }
+      // Reset về trang 1 khi thay đổi bộ lọc
+      setCurrentPage(1);
     }
   }, [products, searchTerm]);
 
   // Handle search
   const handleSearch = async () => {
     if (!searchTerm.trim()) {
-      await fetchProducts();
+      await fetchProducts("?page=1&limit=100");
       return;
     }
     
     try {
       const searchResults = await searchProducts(searchTerm);
       setFilteredProducts(searchResults || []);
+      setCurrentPage(1);
     } catch (error) {
       console.error("Lỗi khi tìm kiếm sản phẩm:", error);
     }
@@ -67,7 +110,6 @@ const AdminProductsPage = () => {
     setFormData({
       name: "",
       brand: "",
-      price: "",
       priceVND: "",
       description: "",
       image: "",
@@ -82,14 +124,12 @@ const AdminProductsPage = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     
-    if (name === "price") {
+    if (name === "priceVND") {
       // Only allow numbers
       const numericValue = value.replace(/[^0-9]/g, "");
       setFormData({ 
         ...formData, 
-        [name]: numericValue,
-        // Tự động tính priceVND khi nhập price
-        priceVND: numericValue ? parseInt(numericValue) * 24000 : ""
+        [name]: numericValue
       });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -116,7 +156,6 @@ const AdminProductsPage = () => {
     setFormData({
       name: product.name,
       brand: product.brand,
-      price: product.price.toString(),
       priceVND: product.priceVND.toString(),
       description: product.description,
       image: product.image,
@@ -133,7 +172,7 @@ const AdminProductsPage = () => {
     e.preventDefault();
     
     // Validate form
-    if (!formData.name || !formData.brand || !formData.price || !formData.image || formData.sizes.length === 0) {
+    if (!formData.name || !formData.brand || !formData.priceVND || !formData.image || formData.sizes.length === 0) {
       alert("Vui lòng điền đầy đủ thông tin sản phẩm");
       return;
     }
@@ -142,7 +181,7 @@ const AdminProductsPage = () => {
     const productData = {
       name: formData.name.trim(),
       brand: formData.brand.trim(),
-      price: parseInt(formData.price, 10),
+      price: parseInt(formData.priceVND, 10) / 24000, // Tính ngược lại giá USD từ VND
       priceVND: parseInt(formData.priceVND, 10),
       description: formData.description.trim(),
       image: formData.image.trim(),
@@ -257,57 +296,117 @@ const AdminProductsPage = () => {
           <p>{error}</p>
         </div>
       ) : (
-        <div className="products-table-container">
-          {filteredProducts.length === 0 ? (
-            <div className="no-products">
-              <p>Không tìm thấy sản phẩm nào.</p>
-            </div>
-          ) : (
-            <table className="products-table">
-              <thead>
-                <tr>
-                  <th>Ảnh</th>
-                  <th>Tên</th>
-                  <th>Thương hiệu</th>
-                  <th>Giá (VNĐ)</th>
-                  <th>Kích cỡ</th>
-                  <th>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredProducts.map((product) => (
-                  <tr key={product._id}>
-                    <td>
-                      <img 
-                        src={product.image} 
-                        alt={product.name} 
-                        className="product-thumbnail"
-                      />
-                    </td>
-                    <td>{product.name}</td>
-                    <td>{product.brand}</td>
-                    <td>{product.priceVND.toLocaleString("vi-VN")}đ</td>
-                    <td>{product.sizes?.join(", ")}</td>
-                    <td className="actions-cell">
-                      <button
-                        className="edit-btn"
-                        onClick={() => handleEditClick(product)}
-                      >
-                        <FontAwesomeIcon icon={faEdit} />
-                      </button>
-                      <button
-                        className="delete-btn"
-                        onClick={() => handleDeleteClick(product._id)}
-                      >
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
-                    </td>
+        <>
+          <div className="products-table-container">
+            {filteredProducts.length === 0 ? (
+              <div className="no-products">
+                <p>Không tìm thấy sản phẩm nào.</p>
+              </div>
+            ) : (
+              <table className="products-table">
+                <thead>
+                  <tr>
+                    <th>Ảnh</th>
+                    <th>Tên</th>
+                    <th>Thương hiệu</th>
+                    <th>Giá (VNĐ)</th>
+                    <th>Kích cỡ</th>
+                    <th>Thao tác</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {currentProducts.map((product) => (
+                    <tr key={product._id}>
+                      <td>
+                        <img 
+                          src={product.image} 
+                          alt={product.name} 
+                          className="product-thumbnail"
+                        />
+                      </td>
+                      <td>{product.name}</td>
+                      <td>{product.brand}</td>
+                      <td>{product.priceVND.toLocaleString("vi-VN")}đ</td>
+                      <td>{product.sizes?.join(", ")}</td>
+                      <td className="actions-cell">
+                        <button
+                          className="edit-btn"
+                          onClick={() => handleEditClick(product)}
+                        >
+                          <FontAwesomeIcon icon={faEdit} />
+                        </button>
+                        <button
+                          className="delete-btn"
+                          onClick={() => handleDeleteClick(product._id)}
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+          
+          {/* Phân trang */}
+          {filteredProducts && filteredProducts.length > productsPerPage && (
+            <div className="pagination">
+              <button 
+                className="pagination-button" 
+                onClick={goToPreviousPage}
+                disabled={currentPage === 1}
+              >
+                <FontAwesomeIcon icon={faChevronLeft} />
+              </button>
+              
+              <div className="pagination-numbers">
+                {Array.from({ length: Math.ceil(filteredProducts.length / productsPerPage) }).map((_, index) => {
+                  const pageNumber = index + 1;
+                  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+                  
+                  // Hiển thị các số trang và dấu "..." nếu cần
+                  if (pageNumber <= 5 || pageNumber === totalPages) {
+                    return (
+                      <button
+                        key={pageNumber}
+                        className={`pagination-number ${currentPage === pageNumber ? 'active' : ''}`}
+                        onClick={() => paginate(pageNumber)}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  }
+                  
+                  // Hiển thị dấu "..." giữa những trang
+                  if (pageNumber === 6 && totalPages > 6) {
+                    return <span key="ellipsis" className="pagination-ellipsis">...</span>;
+                  }
+                  
+                  return null;
+                })}
+              </div>
+              
+              {currentPage < Math.ceil(filteredProducts.length / productsPerPage) && (
+                <div className="pagination-next">
+                  <button 
+                    className="pagination-next-button" 
+                    onClick={goToNextPage}
+                  >
+                    Trang Sau <FontAwesomeIcon icon={faChevronRight} />
+                  </button>
+                </div>
+              )}
+            </div>
           )}
-        </div>
+          
+          {/* Thông tin tổng sản phẩm */}
+          {filteredProducts && filteredProducts.length > 0 && (
+            <div className="pagination-info">
+              <p>Tổng sản phẩm: {filteredProducts.length} | Số trang: {Math.ceil(filteredProducts.length / productsPerPage)} | Trang hiện tại: {currentPage}</p>
+            </div>
+          )}
+        </>
       )}
       
       {/* Product Form Modal */}
@@ -349,19 +448,6 @@ const AdminProductsPage = () => {
               </div>
               
               <div className="form-group">
-                <label htmlFor="price">Giá (USD):</label>
-                <input
-                  type="text"
-                  id="price"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleInputChange}
-                  placeholder="Nhập giá sản phẩm (USD)"
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
                 <label htmlFor="priceVND">Giá (VNĐ):</label>
                 <input
                   type="text"
@@ -369,9 +455,8 @@ const AdminProductsPage = () => {
                   name="priceVND"
                   value={formData.priceVND}
                   onChange={handleInputChange}
-                  placeholder="Tự động tính khi nhập giá USD"
+                  placeholder="Nhập giá sản phẩm (VNĐ)"
                   required
-                  readOnly
                 />
               </div>
               
