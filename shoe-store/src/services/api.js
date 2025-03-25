@@ -28,6 +28,11 @@ export const authAPI = {
     return response.data;
   },
   
+  getCurrentUser: async () => {
+    const response = await api.get('/auth/me');
+    return response.data;
+  },
+  
   getProfile: async () => {
     const response = await api.get('/auth/me');
     return response.data;
@@ -60,6 +65,47 @@ export const productsAPI = {
     const response = await api.get(`/products/search?q=${searchTerm}`);
     return response.data;
   },
+
+  // Admin API methods
+  createProduct: async (productData) => {
+    console.log("API - Sending product data:", productData);
+    // Đảm bảo dữ liệu phù hợp với schema của backend
+    const validData = {
+      name: productData.name,
+      brand: productData.brand,
+      price: productData.price,
+      priceVND: productData.priceVND || productData.price * 24000, // Tính giá VND nếu không có
+      image: productData.image,
+      description: productData.description || '',
+      sizes: productData.sizes || [],
+      inStock: productData.inStock !== undefined ? productData.inStock : true
+    };
+    console.log("API - Formatted data:", validData);
+    const response = await api.post('/products', validData);
+    return response.data;
+  },
+
+  updateProduct: async (id, productData) => {
+    console.log("API - Updating product:", id, productData);
+    // Đảm bảo dữ liệu phù hợp với schema của backend
+    const validData = {
+      name: productData.name,
+      brand: productData.brand,
+      price: productData.price,
+      priceVND: productData.priceVND || productData.price * 24000, // Tính giá VND nếu không có
+      image: productData.image,
+      description: productData.description || '',
+      sizes: productData.sizes || [],
+      inStock: productData.inStock !== undefined ? productData.inStock : true
+    };
+    const response = await api.put(`/products/${id}`, validData);
+    return response.data;
+  },
+
+  deleteProduct: async (id) => {
+    const response = await api.delete(`/products/${id}`);
+    return response.data;
+  }
 };
 
 // Cart API
@@ -98,6 +144,11 @@ export const ordersAPI = {
   },
   
   getOrders: async () => {
+    const response = await api.get('/orders/myorders');
+    return response.data;
+  },
+  
+  getAllOrders: async () => {
     const response = await api.get('/orders');
     return response.data;
   },
@@ -106,6 +157,28 @@ export const ordersAPI = {
     const response = await api.get(`/orders/${id}`);
     return response.data;
   },
+
+  updateOrderStatus: async (id, statusData) => {
+    const response = await api.put(`/orders/${id}`, statusData);
+    return response.data;
+  },
+
+  // Thêm API mới để cập nhật trạng thái thanh toán
+  updatePaymentStatus: async (id) => {
+    // API mới đã hỗ trợ toggle trạng thái, không cần tham số thêm
+    const response = await api.put(`/orders/${id}/pay`);
+    return response.data;
+  },
+
+  checkPaymentStatus: async (id) => {
+    const response = await api.get(`/orders/${id}/payment-status`);
+    return response.data;
+  },
+
+  cancelOrder: async (id) => {
+    const response = await api.delete(`/orders/${id}`);
+    return response.data;
+  }
 };
 
 // Response interceptor for handling token expiration and other errors
@@ -115,13 +188,16 @@ api.interceptors.response.use(
     // Check if the error is a 401 and not from authentication endpoints
     const isAuthenticationError = error.response && error.response.status === 401;
     const isAuthEndpoint = error.config.url.includes('/auth/login') || 
-                            error.config.url.includes('/auth/me');
+                           error.config.url.includes('/auth/me');
     const isAlreadyOnLoginPage = window.location.pathname.includes('/login');
 
     // Only redirect if it's a 401 error from a non-auth endpoint and not already on login page
     if (isAuthenticationError && !isAuthEndpoint && !isAlreadyOnLoginPage) {
-      // Redirect to login for expired or invalid tokens
-      window.location.href = '/login';
+      console.log('Redirecting to login due to authentication error');
+      // Redirect to login for expired or invalid tokens (without console error)
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 0);
     }
 
     // Always allow the error to be handled by the calling method

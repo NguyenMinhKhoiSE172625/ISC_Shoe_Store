@@ -1,273 +1,579 @@
 .header {
-    background-color: #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    padding: 18px 0;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 16px 0;
     position: sticky;
     top: 0;
     z-index: 1000;
     transition: all 0.3s ease;
-  }
-  
-  .header-container {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.header.scrolled {
+    padding: 12px 0;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    background-color: rgba(255, 255, 255, 0.97);
+}
+
+.header:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
-  }
-  
-  .logo {
-    transition: transform 0.3s ease;
-  }
-  
-  .logo:hover {
-    transform: scale(1.05);
-  }
-  
-  .logo h1 {
-    font-size: 30px;
-    font-weight: 700;
-    color: #3b82f6;
-    margin: 0;
+}
+
+.logo-and-nav {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: 800;
+    color: #4a90e2;
+    margin-right: 40px;
     letter-spacing: -0.5px;
-    position: relative;
-    display: inline-block;
-  }
-  
-  .logo h1::after {
-    content: '';
-    position: absolute;
-    bottom: -3px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, #3b82f6, #60a5fa);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s ease;
-  }
-  
-  .logo h1:hover::after {
-    transform: scaleX(1);
-  }
-  
-  .nav-list {
+    transition: transform 0.3s ease, color 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.logo:hover {
+    color: #357abd;
+    transform: scale(1.05);
+}
+
+.main-nav {
+    display: flex;
+}
+
+.nav-list {
     display: flex;
     list-style: none;
-    margin: 0;
+    gap: 32px;
     padding: 0;
-  }
-  
-  .nav-item {
-    margin-right: 28px;
+    margin: 0;
+    align-items: center; /* Căn giữa các item theo chiều dọc */
+}
+
+.nav-item {
     position: relative;
-  }
-  
-  .nav-link {
-    color: #1f2937;
-    font-weight: 500;
-    font-size: 17px;
-    text-decoration: none;
-    padding: 8px 0;
-    position: relative;
-    transition: color 0.3s;
+    display: flex; /* Thêm vào để đảm bảo các item đều có cấu trúc nhất quán */
+}
+
+.nav-item::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #4a90e2;
+    transition: width 0.3s ease;
+}
+
+.nav-item:hover::after {
+    width: 100%;
+}
+
+/* Điều chỉnh style chung cho cả nav-link và admin-link */
+.nav-link, .admin-link {
     display: flex;
     align-items: center;
     gap: 8px;
-  }
-  
-  .nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #3b82f6;
-    transform: scaleX(0);
-    transform-origin: center;
-    transition: transform 0.3s ease;
-  }
-  
-  .nav-link:hover {
-    color: #3b82f6;
-  }
-  
-  .nav-link:hover::after,
-  .nav-link.active::after {
-    transform: scaleX(1);
-  }
-  
-  .nav-icon {
+    height: 40px; /* Đặt chiều cao cố định */
+    justify-content: center; /* Căn giữa nội dung */
+}
+
+.nav-link {
+    color: #333;
+    font-weight: 600;
     font-size: 16px;
-    color: #3b82f6;
-    transition: transform 0.3s ease;
-  }
-  
-  .nav-link:hover .nav-icon,
-  .nav-link.active .nav-icon {
-    transform: translateY(-2px);
-  }
-  
-  .user-actions {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-  }
-  
-  .welcome-text {
-    margin-right: 15px;
-    font-weight: 500;
-    color: #4b5563;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .welcome-text span {
-    color: #3b82f6;
-    font-weight: 600;
-    margin-left: 4px;
-  }
-  
-  .gender-icon {
-    margin-right: 10px;
-    color: #3b82f6;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-  }
-  
-  .gender-icon:hover {
-    transform: scale(1.1);
-  }
-  
-  .cart-link {
-    display: flex;
-    align-items: center;
-    color: #1f2937;
-    font-weight: 500;
-    margin-right: 15px;
-    text-decoration: none;
     transition: color 0.3s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.nav-link svg,
+.admin-link svg {
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+/* Chỉnh sửa phần quan trọng nhất cho các span */
+.nav-link span,
+.admin-link span {
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    min-width: 80px; /* Đặt chiều rộng tối thiểu cho các span thông thường */
+    justify-content: center; /* Căn giữa nội dung trong span */
+    text-align: center; /* Đảm bảo text được căn giữa */
+}
+
+/* Đặt chiều rộng lớn hơn cho "Quản lý sản phẩm" */
+.admin-link span {
+    min-width: 130px; /* Điều chỉnh cho phù hợp với nội dung dài hơn */
+}
+
+.nav-link:hover {
+    color: #4a90e2;
+}
+
+.nav-link.active {
+    color: #4a90e2;
+}
+
+.admin-nav-item {
     position: relative;
-  }
-  
-  .cart-icon {
-    font-size: 22px;
-    color: #3b82f6;
-    transition: transform 0.2s ease, color 0.3s ease;
-  }
-  
-  .cart-count {
-    position: absolute;
-    top: -8px;
-    right: -10px;
-    background-color: #ef4444;
-    color: white;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
+}
+
+.admin-link {
+    color: #fff;
+    background-color: #4a90e2;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(74, 144, 226, 0.3);
+}
+
+.admin-link:hover {
+    background-color: #357abd;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(74, 144, 226, 0.4);
+}
+
+.admin-icon {
+    font-size: 14px;
+}
+
+.user-actions {
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 600;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
-  }
-  
-  .cart-link:hover {
-    color: #3b82f6;
-  }
-  
-  .cart-link:hover .cart-icon {
-    transform: scale(1.15);
-    color: #2563eb;
-  }
-  
-  .cart-link:hover .cart-count {
-    transform: scale(1.1);
-  }
-  
-  .btn {
+    gap: 24px;
+}
+
+/* User dropdown styles */
+.user-dropdown {
+    position: relative;
+}
+
+.user-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
     border: none;
     cursor: pointer;
     font-weight: 500;
+    font-size: 15px;
+    color: #555;
+    padding: 8px 12px;
     border-radius: 6px;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+}
+
+.user-dropdown-toggle:hover,
+.user-dropdown-toggle.active {
+    background-color: #f5f5f5;
+}
+
+.user-dropdown-toggle .user-icon {
+    color: #4a90e2;
+    font-size: 16px;
+}
+
+.user-dropdown-toggle .user-name {
+    color: #4a90e2;
+    font-weight: 700;
+}
+
+.dropdown-arrow {
+    font-size: 12px;
+    margin-left: 4px;
+    transition: transform 0.2s ease;
+}
+
+.user-dropdown-toggle.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.user-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 220px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    z-index: 1000;
+    margin-top: 8px;
+    animation: dropdown-fade 0.2s ease;
+    border: 1px solid #f0f0f0;
+}
+
+@keyframes dropdown-fade {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: #333;
+    font-size: 15px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background-color: #f7f9fc;
+}
+
+.dropdown-item svg {
+    font-size: 16px;
+    color: #4a90e2;
+}
+
+.logout-item {
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    font-family: inherit;
+}
+
+.logout-item svg {
+    color: #e74c3c;
+}
+
+.logout-item:hover {
+    background-color: #fff8f8;
+}
+
+.welcome-text {
+    font-weight: 500;
+    font-size: 15px;
+    color: #555;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.welcome-text span {
+    line-height: 1;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    padding: 10px 20px;
+}
+
+.user-icon {
+    color: #4a90e2;
     font-size: 16px;
-  }
-  
-  .btn-primary {
-    background-color: #3b82f6;
+}
+
+.user-profile-link span {
+    color: #4a90e2;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    position: relative;
+    padding-bottom: 2px;
+}
+
+.user-profile-link span::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #4a90e2;
+    transition: width 0.3s ease;
+}
+
+.user-profile-link span:hover {
+    color: #357abd;
+}
+
+.user-profile-link span:hover::after {
+    width: 100%;
+}
+
+.cart-link {
+    position: relative;
+    transition: transform 0.2s ease;
+}
+
+.cart-link:hover {
+    transform: scale(1.1);
+}
+
+.cart-icon {
+    font-size: 22px;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.cart-icon:hover {
+    color: #4a90e2;
+}
+
+.cart-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #4a90e2;
     color: white;
-    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
-  }
-  
-  .btn-primary:hover {
-    background-color: #2563eb;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.4);
-  }
-  
-  .btn-secondary {
-    background-color: #f3f4f6;
-    color: #1f2937;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-  
-  .btn-secondary:hover {
-    background-color: #e5e7eb;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
-  }
-  
-  .login-btn,
-  .register-btn,
-  .logout-btn {
+    font-size: 12px;
+    font-weight: 600;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.cart-link:hover .cart-count {
+    background-color: #357abd;
+    transform: scale(1.1);
+}
+
+.gender-icon {
+    color: #666;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.gender-icon:hover {
+    color: #4a90e2;
+    transform: rotate(15deg);
+}
+
+.btn {
     padding: 8px 16px;
-    font-weight: 500;
-  }
-  
-  .login-btn {
-    margin-right: 10px;
-  }
-  
-  /* Media queries for responsiveness */
-  @media (max-width: 768px) {
-    .header-container {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn svg {
+    font-size: 15px;
+}
+
+.btn span {
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-primary {
+    background-color: #4a90e2;
+    color: white;
+    box-shadow: 0 2px 6px rgba(74, 144, 226, 0.3);
+}
+
+.btn-primary:hover {
+    background-color: #357abd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(74, 144, 226, 0.4);
+}
+
+.btn-secondary {
+    background-color: #f5f7fa;
+    color: #4a90e2;
+    border: 1px solid #e0e7ff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.btn-secondary:hover {
+    background-color: #e6eefb;
+    color: #357abd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.menu-toggle:hover {
+    color: #4a90e2;
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+    .logo {
+        margin-right: 25px;
+        font-size: 24px;
     }
     
     .nav-list {
-      margin-top: 10px;
-      justify-content: flex-start;
-      width: 100%;
+        gap: 20px;
     }
     
     .user-actions {
-      margin-top: 10px;
-      justify-content: flex-start;
-      width: 100%;
+        gap: 18px;
     }
-  }
-  
-  @media (max-width: 576px) {
+    
     .welcome-text {
-      display: none;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .logo-and-nav {
+        flex: none;
+    }
+    
+    .menu-toggle {
+        display: block;
+        order: 2;
+        margin-left: 20px;
+    }
+    
+    .main-nav {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        transform: translateY(-150%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.4s ease;
+        z-index: 100;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .main-nav.show {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .nav-list {
+        flex-direction: column;
+        gap: 20px;
     }
     
     .nav-item {
-      margin-right: 15px;
+        width: 100%;
     }
-  }
+    
+    .nav-item::after {
+        display: none;
+    }
+    
+    .nav-link {
+        padding: 10px 0;
+        display: block;
+        width: 100%;
+        font-size: 16px;
+    }
+    
+    .admin-link {
+        display: inline-flex;
+        margin-top: 5px;
+    }
+    
+    .user-actions {
+        margin-left: auto;
+    }
+    
+    .user-dropdown-toggle {
+        padding: 8px 0;
+    }
+    
+    .user-dropdown-menu {
+        width: 200px;
+        right: -20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .header {
+        padding: 12px 0;
+    }
+    
+    .header-container {
+        padding: 0 15px;
+    }
+    
+    .logo {
+        font-size: 20px;
+    }
+    
+    .welcome-text {
+        display: none;
+    }
+    
+    .user-actions {
+        gap: 12px;
+    }
+    
+    .btn {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+    
+    .cart-icon {
+        font-size: 20px;
+    }
+    
+    .cart-count {
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
+    }
+    
+    .user-dropdown-toggle .user-name {
+        max-width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
   
   

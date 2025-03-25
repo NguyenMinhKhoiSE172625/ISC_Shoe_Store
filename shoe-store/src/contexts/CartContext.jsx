@@ -25,11 +25,17 @@ export const CartProvider = ({ children }) => {
   const fetchCart = async () => {
     try {
       setLoading(true);
-      const { data } = await cartAPI.getCart();
-      setCart(data.items || []);
+      // Chỉ gọi API nếu đã đăng nhập
+      if (isLoggedIn) {
+        const { data } = await cartAPI.getCart();
+        setCart(data.items || []);
+      }
     } catch (error) {
       console.error('Error fetching cart:', error);
-      toast.error('Không thể tải giỏ hàng. Vui lòng thử lại sau.');
+      // Chỉ hiển thị thông báo lỗi với các lỗi không phải 401
+      if (error.response?.status !== 401) {
+        toast.error('Không thể tải giỏ hàng. Vui lòng thử lại sau.');
+      }
     } finally {
       setLoading(false);
     }

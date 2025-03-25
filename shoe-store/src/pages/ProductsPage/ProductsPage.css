@@ -9,14 +9,108 @@
     color: #333;
   }
   
+  .search-and-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 36px;
+    padding: 0 20px;
+  }
+  
+  .search-form {
+    width: 100%;
+  }
+  
+  .search-container {
+    display: flex;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .search-container:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+  
+  .search-container:focus-within {
+    box-shadow: 0 8px 25px rgba(74, 144, 226, 0.25);
+    transform: translateY(-2px);
+  }
+  
+  .search-input {
+    flex: 1;
+    padding: 16px 20px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+    background-color: #f8fafc;
+    color: #333;
+  }
+  
+  .search-input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+  }
+  
+  .search-input:focus {
+    border-color: #2a7edd;
+    background-color: #ffffff;
+  }
+  
+  .search-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #2a7edd, #2a7edd);
+    color: white;
+    border: none;
+    padding: 0 25px;
+    border-radius: 0 12px 12px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .search-button:hover {
+    background: linear-gradient(135deg, #2a7edd, #2a7edd);
+  }
+  
+  .search-button:active {
+    transform: scale(0.97);
+  }
+  
+  .search-button:disabled {
+    background: linear-gradient(135deg, #a0aec0, #718096);
+    cursor: not-allowed;
+    transform: none;
+  }
+  
   .filters-container {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 30px;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
     background-color: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 18px 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    flex-wrap: wrap;
+  }
+  
+  .filter-icon {
+    color: #4a90e2;
+    font-size: 18px;
   }
   
   .filter-group {
@@ -25,23 +119,32 @@
   }
   
   .filter-group label {
-    margin-right: 10px;
+    margin-right: 12px;
     font-weight: 500;
+    color: #4a5568;
   }
   
   .filter-select {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff;
+    padding: 10px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #f8fafc;
     font-size: 16px;
     min-width: 150px;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  
+  .filter-select:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
   }
   
   .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 30px;
+    padding: 0 20px;
   }
   
   .loading {
@@ -57,16 +160,43 @@
     font-size: 18px;
     color: #666;
     grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .reset-filters-btn {
+    background-color: #f1f5f9;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+  
+  .reset-filters-btn:hover {
+    background-color: #e2e8f0;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .reset-filters-btn:active {
+    transform: translateY(0);
   }
   
   @media (max-width: 768px) {
     .filters-container {
       flex-direction: column;
-      gap: 15px;
+      align-items: flex-start;
+      padding: 16px;
     }
   
     .filter-group {
       width: 100%;
+      margin-bottom: 12px;
     }
   
     .filter-select {
@@ -76,6 +206,25 @@
     .products-grid {
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 20px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .search-container {
+      max-width: 100%;
+    }
+    
+    .search-input {
+      padding: 14px 16px;
+      font-size: 15px;
+    }
+
+    .search-button {
+      padding: 0 18px;
+    }
+    
+    .filter-group label {
+      width: 80px;
     }
   }
   
