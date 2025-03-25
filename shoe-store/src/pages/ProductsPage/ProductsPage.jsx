@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useProducts } from "../../contexts/ProductContext"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faSearch, faFilter } from "@fortawesome/free-solid-svg-icons"
+import { faSearch, faFilter, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons"
 import ProductCard from "../../components/ProductCard/ProductCard"
 import "./ProductsPage.css"
 
@@ -226,7 +226,7 @@ const ProductsPage = () => {
                 disabled={currentPage === 1}
                 aria-label="Trang trước"
               >
-                Trước
+                <FontAwesomeIcon icon={faChevronLeft} />
               </button>
               
               <div className="pagination-container">
@@ -266,7 +266,7 @@ const ProductsPage = () => {
                 disabled={currentPage === Math.ceil(filteredProducts.length / productsPerPage)}
                 aria-label="Trang sau"
               >
-                Trang sau
+                <FontAwesomeIcon icon={faChevronRight} />
               </button>
             </div>
           )}
