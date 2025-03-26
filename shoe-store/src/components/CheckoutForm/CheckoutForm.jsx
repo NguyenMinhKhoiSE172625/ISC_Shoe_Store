@@ -3,8 +3,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
-import { ordersAPI } from "../../services/api"
-import PayOSCheckout from "../PayOSCheckout/PayOSCheckout"
+import { ordersAPI, paymentAPI } from "../../services/api"
 import "./CheckoutForm.css"
 
 // Định nghĩa các phương thức thanh toán
@@ -24,7 +23,7 @@ const CheckoutForm = ({ total }) => {
     paymentMethod: "payos" // Mặc định là PayOS
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [checkoutUrl, setCheckoutUrl] = useState(null)
+  const [payosData, setPayosData] = useState(null) // Lưu trữ dữ liệu thanh toán PayOS
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -62,36 +61,160 @@ const CheckoutForm = ({ total }) => {
         } else {
           toast.error("Không thể tạo đơn hàng. Vui lòng thử lại sau.")
         }
-      } else {
-        // Xử lý đơn hàng PayOS
-        const response = await ordersAPI.createOrder({
-          ...orderData,
-          paymentMethod: "banking" // Chuyển đổi payos thành banking cho backend
-        })
-
-        // Nhận URL thanh toán từ PayOS và chuyển hướng người dùng
-        if (response.success && response.data.checkoutUrl) {
-          setCheckoutUrl(response.data.checkoutUrl)
-        } else {
-          toast.error("Không thể tạo liên kết thanh toán. Vui lòng thử lại sau.")
+      } else if (formData.paymentMethod === "payos") {
+        try {
+          // Bước 1: Tạo đơn hàng trước
+          const orderResponse = await ordersAPI.createOrder(orderData)
+          
+          if (!orderResponse.success) {
+            toast.error("Không thể tạo đơn hàng. Vui lòng thử lại sau.")
+            return
+          }
+          
+          const orderId = orderResponse.data._id
+          
+          try {
+            // Bước 2: Tạo payment link với PayOS
+            const paymentLinkOptions = {
+              returnUrl: `${window.location.origin}/order-success/${orderId}`,
+              cancelUrl: `${window.location.origin}/order-cancel/${orderId}`
+            }
+            
+            // Sử dụng timeout dài hơn để tránh lỗi timeout
+            const paymentResponse = await paymentAPI.createPaymentLink(orderId, paymentLinkOptions)
+            
+            if (paymentResponse.success) {
+              // Có 2 lựa chọn: Hiển thị thông tin thanh toán hoặc chuyển hướng ngay
+              // Lựa chọn 1: Hiển thị thông tin thanh toán
+              setPayosData(paymentResponse.data)
+              
+              // Lựa chọn 2: Chuyển hướng ngay đến trang thanh toán PayOS
+              // window.location.href = paymentResponse.data.checkoutUrl
+            } else {
+              // Nếu không thành công, chuyển đến trang chi tiết đơn hàng
+              toast.warning("Không thể tạo liên kết thanh toán ngay lúc này. Bạn có thể thanh toán sau trong trang chi tiết đơn hàng.")
+              navigate(`/orders/${orderId}`)
+            }
+          } catch (paymentError) {
+            console.error("Chi tiết lỗi thanh toán:", paymentError)
+            
+            // Xử lý theo chi tiết lỗi nếu có
+            if (paymentError.response?.status === 500) {
+              toast.error("Có lỗi từ cổng thanh toán. Bạn có thể thanh toán sau trong trang chi tiết đơn hàng.")
+            } else {
+              toast.error("Có lỗi khi kết nối với cổng thanh toán. Bạn có thể thanh toán sau.")
+            }
+            
+            // Vẫn chuyển hướng người dùng đến trang đơn hàng để họ có thể thanh toán sau
+            navigate(`/orders/${orderId}`)
+          }
+        } catch (orderError) {
+          console.error("Lỗi khi tạo đơn hàng:", orderError)
+          const errorMessage = orderError.response?.data?.error || "Không thể tạo đơn hàng. Vui lòng thử lại sau."
+          toast.error(errorMessage)
         }
       }
     } catch (error) {
-      console.error("Lỗi khi tạo đơn hàng:", error)
-      const serverErrorMessage = error.response?.data?.error || error.response?.data?.message
-      const errorMessage = serverErrorMessage || "Không thể tạo đơn hàng. Vui lòng thử lại sau."
+      console.error("Lỗi:", error)
+      const errorMessage = error.response?.data?.error || "Có lỗi xảy ra. Vui lòng thử lại sau."
       toast.error(errorMessage)
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  // Nếu đã có checkoutUrl, hiển thị component PayOSCheckout
-  if (checkoutUrl) {
-    return <PayOSCheckout 
-      checkoutUrl={checkoutUrl} 
-      onCancel={() => setCheckoutUrl(null)} 
-    />
+  // Nếu đã có dữ liệu PayOS, hiển thị thông tin thanh toán
+  if (payosData) {
+    console.log("PayOS Data received:", payosData); // Log để debug
+    
+    // Kiểm tra xem URL QR code có CORS issue không
+    const isValidQrUrl = payosData.qrCode && 
+      (payosData.qrCode.startsWith('https://api.qrserver.com') || 
+       payosData.qrCode.startsWith('data:image'));
+    
+    return (
+      <div className="payos-checkout-container">
+        <div className="payos-checkout-header">
+          <h2>Thanh toán qua PayOS</h2>
+          <p>Vui lòng quét mã QR hoặc nhấn vào nút bên dưới để thanh toán</p>
+        </div>
+        
+        <div className="payos-checkout-qr">
+          {isValidQrUrl ? (
+            <img 
+              src={payosData.qrCode} 
+              alt="QR Code" 
+              className="payos-qr-image" 
+              onError={(e) => {
+                console.error("Lỗi khi tải QR code:", e);
+                e.target.src = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + 
+                  encodeURIComponent(payosData.checkoutUrl || 'https://payos.vn');
+                e.target.onError = null;
+              }}
+            />
+          ) : payosData.checkoutUrl ? (
+            // Tạo QR code từ checkout URL nếu không có QR code hợp lệ
+            <img 
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(payosData.checkoutUrl)}`} 
+              alt="QR Code" 
+              className="payos-qr-image" 
+              onError={(e) => {
+                console.error("Lỗi khi tải QR code thay thế:", e);
+                e.target.src = '/placeholder.svg';
+                e.target.onError = null;
+              }}
+            />
+          ) : (
+            <div className="qr-code-fallback">
+              <p>Không thể tải mã QR.</p>
+              <p>Vui lòng sử dụng nút "Thanh toán ngay" bên dưới.</p>
+            </div>
+          )}
+        </div>
+        
+        <div className="payos-checkout-info">
+          <div className="info-row">
+            <span>Số tiền:</span>
+            <span>{Number(payosData.amount).toLocaleString('vi-VN')}đ</span>
+          </div>
+          <div className="info-row">
+            <span>Mô tả:</span>
+            <span>{payosData.description || "Thanh toán đơn hàng"}</span>
+          </div>
+          {payosData.accountNumber && (
+            <div className="info-row">
+              <span>Số tài khoản:</span>
+              <span>{payosData.accountNumber}</span>
+            </div>
+          )}
+          {payosData.accountName && (
+            <div className="info-row">
+              <span>Tên tài khoản:</span>
+              <span>{payosData.accountName}</span>
+            </div>
+          )}
+        </div>
+        
+        <div className="payos-checkout-actions">
+          <a 
+            href={payosData.checkoutUrl} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="btn btn-primary payos-checkout-btn"
+          >
+            Thanh toán ngay
+          </a>
+          <button 
+            className="btn btn-outline payos-cancel-btn"
+            onClick={() => {
+              setPayosData(null)
+            }}
+          >
+            Quay lại
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (

@@ -181,6 +181,108 @@ export const ordersAPI = {
   }
 };
 
+// PayOS API
+export const paymentAPI = {
+  // Tạo link thanh toán PayOS
+  createPaymentLink: async (orderId) => {
+    try {
+      console.log(`API: Tạo link thanh toán cho đơn hàng ${orderId}`);
+      const response = await api.post(`/payment/${orderId}/create-link`);
+      return response.data;
+    } catch (error) {
+      console.error(`API: Lỗi khi tạo link thanh toán:`, error);
+      throw error;
+    }
+  },
+
+  // Kiểm tra trạng thái thanh toán
+  getPaymentStatus: async (orderId) => {
+    let attempts = 0;
+    const maxAttempts = 2;
+    
+    const attempt = async () => {
+      attempts++;
+      try {
+        console.log(`API: Kiểm tra trạng thái thanh toán cho đơn hàng ${orderId} (lần thử ${attempts}/${maxAttempts})`);
+        const response = await api.get(`/payment/${orderId}/check`, { 
+          timeout: 15000,
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+        console.log(`API: Kết quả kiểm tra trạng thái:`, response.data);
+        return response.data;
+      } catch (error) {
+        console.error(`API: Lỗi khi kiểm tra trạng thái thanh toán (lần ${attempts}):`, error);
+        
+        // Thử lại nếu chưa đạt số lần tối đa
+        if (attempts < maxAttempts) {
+          console.log(`API: Thử lại kiểm tra lần ${attempts + 1}...`);
+          // Đợi một chút trước khi thử lại
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          return attempt(); // Thử lại
+        }
+        
+        throw error;
+      }
+    };
+    
+    return await attempt();
+  },
+
+  // Cập nhật trạng thái thanh toán bắt buộc (khi biết đã thanh toán nhưng API không cập nhật)
+  forceUpdatePaymentStatus: async (orderId) => {
+    let attempts = 0;
+    const maxAttempts = 3;
+    
+    const attempt = async () => {
+      attempts++;
+      try {
+        console.log(`API: Đang cập nhật trạng thái thanh toán bắt buộc cho đơn hàng ${orderId} (lần thử ${attempts}/${maxAttempts})`);
+        
+        // Sử dụng timeout dài hơn
+        const response = await api.put(`/payment/${orderId}/force-update`, null, { 
+          timeout: 30000, // Tăng timeout lên 30 giây
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+        
+        console.log(`API: Kết quả cập nhật trạng thái bắt buộc:`, response.data);
+        return response.data;
+      } catch (error) {
+        console.error(`API: Lỗi khi cập nhật trạng thái thanh toán bắt buộc (lần ${attempts}):`, error);
+        
+        // Thử lại nếu chưa đạt số lần tối đa
+        if (attempts < maxAttempts) {
+          console.log(`API: Thử lại cập nhật bắt buộc lần ${attempts + 1}...`);
+          // Đợi một chút trước khi thử lại
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          return attempt(); // Thử lại
+        }
+        
+        throw error;
+      }
+    };
+    
+    return await attempt();
+  },
+  
+  // Hủy link thanh toán
+  cancelPaymentLink: async (orderId) => {
+    try {
+      console.log(`API: Hủy link thanh toán cho đơn hàng ${orderId}`);
+      const response = await api.delete(`/payment/${orderId}/cancel`);
+      return response.data;
+    } catch (error) {
+      console.error(`API: Lỗi khi hủy link thanh toán:`, error);
+      throw error;
+    }
+  }
+};
+
 // Response interceptor for handling token expiration and other errors
 api.interceptors.response.use(
   (response) => response,

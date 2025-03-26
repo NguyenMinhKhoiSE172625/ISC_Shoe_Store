@@ -1,127 +1,120 @@
 .checkout-form-container {
     max-width: 800px;
     margin: 0 auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    width: 100%;
   }
   
   .checkout-form {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
   
   .form-section {
-    margin-bottom: 30px;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 1.5rem;
   }
   
   .form-section h3 {
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    color: #374151;
   }
   
   .form-row {
     display: flex;
-    gap: 15px;
-  }
-  
-  .form-row .form-group {
-    flex: 1;
+    gap: 1rem;
   }
   
   .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 1rem;
+    width: 100%;
   }
   
   .form-group label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 0.5rem;
     font-weight: 500;
+    color: #4b5563;
   }
   
   .form-group input {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
     border-radius: 4px;
-    font-size: 16px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
   }
   
   .form-group input:focus {
+    border-color: #3b82f6;
     outline: none;
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
   }
   
   .order-summary {
-    background-color: #f9f9f9;
-    padding: 20px;
+    background-color: #f9fafb;
     border-radius: 8px;
-    margin-bottom: 20px;
+    padding: 1.25rem;
   }
   
   .summary-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 0.75rem;
+    color: #4b5563;
   }
   
   .summary-row.total {
     font-weight: 700;
-    font-size: 18px;
-    border-top: 1px solid #ddd;
-    padding-top: 10px;
-    margin-top: 10px;
+    font-size: 1.125rem;
+    color: #1f2937;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
   }
   
   .checkout-btn {
     width: 100%;
-    padding: 15px;
-    font-size: 18px;
-    border-radius: 30px;
-    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
-    border: none;
+    padding: 0.75rem;
+    background-color: #2563eb;
     color: white;
-    font-weight: 600;
-    transition: all 0.3s ease;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
-    display: block;
-    text-align: center;
-    margin-top: 20px;
+    transition: background-color 0.2s;
   }
   
   .checkout-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(74, 144, 226, 0.4);
-    background: linear-gradient(135deg, #357abd 0%, #4a90e2 100%);
+    background-color: #1d4ed8;
   }
   
   .checkout-btn:disabled {
-    opacity: 0.7;
+    background-color: #93c5fd;
     cursor: not-allowed;
-    transform: none;
   }
   
   .payment-info {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
+    background-color: #f9fafb;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-top: 0.5rem;
   }
   
   .payos-info {
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 10px;
+    gap: 1rem;
   }
   
   .payos-logo {
-    height: 40px;
+    height: 2rem;
     object-fit: contain;
   }
   
@@ -136,6 +129,166 @@
       flex-direction: column;
       gap: 0;
     }
+  }
+  
+  /* Payment methods */
+  .payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .payment-method {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .payment-method:hover {
+    border-color: #93c5fd;
+    background-color: #f0f9ff;
+  }
+  
+  .payment-radio {
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+  }
+  
+  .payment-label {
+    margin-bottom: 0;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  /* PayOS Checkout Container */
+  .payos-checkout-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .payos-checkout-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .payos-checkout-header h2 {
+    color: #1f2937;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .payos-checkout-header p {
+    color: #6b7280;
+  }
+  
+  .payos-checkout-qr {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .payos-qr-image {
+    max-width: 100%;
+    height: auto;
+    max-height: 250px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.5rem;
+  }
+  
+  .payos-checkout-info {
+    background-color: #f9fafb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+  
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .info-row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  
+  .payos-checkout-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .payos-checkout-btn {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #2563eb;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .payos-checkout-btn:hover {
+    background-color: #1d4ed8;
+  }
+  
+  .payos-cancel-btn {
+    padding: 0.75rem;
+    background-color: transparent;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .payos-cancel-btn:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+  }
+  
+  .qr-code-fallback {
+    padding: 2rem;
+    background-color: #f3f4f6;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+    text-align: center;
+  }
+  
+  .qr-code-fallback p {
+    margin: 8px 0;
+    color: #6b7280;
+  }
+  
+  .qr-code-fallback p:first-child {
+    font-weight: 500;
+    color: #4b5563;
   }
   
   

@@ -30,7 +30,7 @@ const CheckoutPage = () => {
             <div key={item._id} className="checkout-item">
               <div className="checkout-item-image">
                 <img 
-                  src={item.product?.image || "/placeholder.svg"} 
+                  src={item.product?.image} 
                   alt={item.product?.name || "Sản phẩm"} 
                 />
               </div>

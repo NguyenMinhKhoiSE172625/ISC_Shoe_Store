@@ -33,6 +33,49 @@ import ProfilePage from "./pages/ProfilePage/ProfilePage"
 // Styles
 import "./App.css"
 
+// Định nghĩa ProtectedRoute component
+function ProtectedRoute({ children }) {
+  const { isLoggedIn, loading } = useAuth();
+  const location = useLocation();
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Đang tải...</p>
+      </div>
+    );
+  }
+
+  if (!isLoggedIn) {
+    return <Navigate to="/login" state={{ from: location.pathname }} />;
+  }
+
+  return children;
+}
+
+// Định nghĩa AdminRoute component
+function AdminRoute({ children }) {
+  const { isLoggedIn, user, loading } = useAuth();
+  const location = useLocation();
+  const isAdmin = user && user.role === 'admin';
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Đang tải...</p>
+      </div>
+    );
+  }
+
+  if (!isLoggedIn || !isAdmin) {
+    return <Navigate to="/login" state={{ from: location.pathname }} />;
+  }
+
+  return children;
+}
+
 // Tạo một component con để sử dụng context hooks
 function AppContent() {
   const location = useLocation()
@@ -89,23 +132,6 @@ function AppContent() {
               } 
             />
             <Route 
-              path="/admin/products" 
-              element={
-                isLoggedIn && isAdmin ? (
-                  <PageTransition>
-                    <AdminProductsPage />
-                  </PageTransition>
-                ) : loading ? (
-                  <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Đang tải...</p>
-                  </div>
-                ) : (
-                  <Navigate to="/login" state={{ from: '/admin/products' }} />
-                )
-              } 
-            />
-            <Route 
               path="/cart" 
               element={
                 <PageTransition>
@@ -132,85 +158,71 @@ function AppContent() {
             <Route 
               path="/checkout" 
               element={
-                isLoggedIn ? (
+                <ProtectedRoute>
                   <PageTransition>
                     <CheckoutPage />
                   </PageTransition>
-                ) : loading ? (
-                  <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Đang tải...</p>
-                  </div>
-                ) : (
-                  <Navigate to="/login" state={{ from: '/checkout' }} />
-                )
-              } 
-            />
-            <Route 
-              path="/checkout/success" 
-              element={
-                <PageTransition>
-                  <CheckoutSuccess />
-                </PageTransition>
-              } 
-            />
-            <Route 
-              path="/checkout/cancel" 
-              element={
-                <PageTransition>
-                  <CheckoutCancel />
-                </PageTransition>
-              } 
-            />
-            <Route 
-              path="/orders" 
-              element={
-                isLoggedIn ? (
-                  <PageTransition>
-                    <OrdersPage />
-                  </PageTransition>
-                ) : loading ? (
-                  <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Đang tải...</p>
-                  </div>
-                ) : (
-                  <Navigate to="/login" state={{ from: '/orders' }} />
-                )
-              } 
-            />
-            <Route 
-              path="/orders/:id" 
-              element={
-                isLoggedIn ? (
-                  <PageTransition>
-                    <OrderDetailsPage />
-                  </PageTransition>
-                ) : loading ? (
-                  <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Đang tải...</p>
-                  </div>
-                ) : (
-                  <Navigate to="/login" state={{ from: location.pathname }} />
-                )
+                </ProtectedRoute>
               } 
             />
             <Route 
               path="/profile" 
               element={
-                isLoggedIn ? (
+                <ProtectedRoute>
                   <PageTransition>
                     <ProfilePage />
                   </PageTransition>
-                ) : loading ? (
-                  <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Đang tải...</p>
-                  </div>
-                ) : (
-                  <Navigate to="/login" state={{ from: '/profile' }} />
-                )
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/orders" 
+              element={
+                <ProtectedRoute>
+                  <PageTransition>
+                    <OrdersPage />
+                  </PageTransition>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/orders/:id" 
+              element={
+                <ProtectedRoute>
+                  <PageTransition>
+                    <OrderDetailsPage />
+                  </PageTransition>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/order-success/:id" 
+              element={
+                <ProtectedRoute>
+                  <PageTransition>
+                    <CheckoutSuccess />
+                  </PageTransition>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/order-cancel/:id" 
+              element={
+                <ProtectedRoute>
+                  <PageTransition>
+                    <CheckoutCancel />
+                  </PageTransition>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/products" 
+              element={
+                <AdminRoute>
+                  <PageTransition>
+                    <AdminProductsPage />
+                  </PageTransition>
+                </AdminRoute>
               } 
             />
           </Routes>

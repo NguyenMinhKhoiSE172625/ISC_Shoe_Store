@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner, faArrowLeft, faQrcode, faCheckCircle, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
-import { ordersAPI, authAPI } from "../../services/api";
+import { ordersAPI, authAPI, paymentAPI } from "../../services/api";
 import "./OrderDetailsPage.css";
+import { toast } from "react-toastify";
 
 const OrderDetailsPage = () => {
   const { id } = useParams();
@@ -13,6 +14,7 @@ const OrderDetailsPage = () => {
   const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [updatePaymentLoading, setUpdatePaymentLoading] = useState(false);
+  const [payosInfo, setPayosInfo] = useState(null);
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -35,29 +37,19 @@ const OrderDetailsPage = () => {
     fetchOrderDetails();
   }, [id]);
 
-  const handleCheckPaymentStatus = async () => {
-    try {
-      setLoading(true);
-      const response = await ordersAPI.checkPaymentStatus(id);
-      
-      if (response.data && response.data.isPaid) {
-        // Nếu thanh toán đã được cập nhật, làm mới thông tin đơn hàng
-        const updatedOrder = await ordersAPI.getOrder(id);
-        setOrder(updatedOrder.data);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error("Lỗi khi kiểm tra trạng thái thanh toán:", error);
-      setError("Không thể kiểm tra trạng thái thanh toán. Vui lòng thử lại sau.");
-      setLoading(false);
-    }
-  };
-
   const handleCancelOrder = async () => {
     if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
       try {
         setLoading(true);
+        
+        // Nếu đơn hàng thanh toán qua PayOS, hủy payment link
+        if (order.paymentMethod === 'payos' && order.paymentLinkId) {
+          await paymentAPI.cancelPayment(id, 'Hủy bởi người dùng');
+        }
+        
+        // Hủy đơn hàng
         await ordersAPI.cancelOrder(id);
+        
         // Làm mới thông tin đơn hàng
         const updatedOrder = await ordersAPI.getOrder(id);
         setOrder(updatedOrder.data);
@@ -67,6 +59,47 @@ const OrderDetailsPage = () => {
         setError("Không thể hủy đơn hàng. Vui lòng thử lại sau.");
         setLoading(false);
       }
+    }
+  };
+
+  const handleCreatePayment = async () => {
+    try {
+      setLoading(true);
+      
+      // Tạo payment link cho đơn hàng với timeout dài hơn
+      const paymentLinkOptions = {
+        returnUrl: `${window.location.origin}/order-success/${id}`,
+        cancelUrl: `${window.location.origin}/order-cancel/${id}`
+      };
+      
+      try {
+        const response = await paymentAPI.createPaymentLink(id, paymentLinkOptions);
+        
+        if (response.success) {
+          // Lưu thông tin PayOS để hiển thị
+          setPayosInfo(response.data);
+          
+          // Làm mới thông tin đơn hàng
+          const updatedOrder = await ordersAPI.getOrder(id);
+          setOrder(updatedOrder.data);
+        } else {
+          toast.error("Không thể tạo liên kết thanh toán. Vui lòng thử lại sau.");
+        }
+      } catch (error) {
+        console.error("Chi tiết lỗi thanh toán:", error);
+        
+        if (error.response?.status === 500) {
+          toast.error("Có lỗi từ cổng thanh toán. Vui lòng thử lại sau ít phút.");
+        } else {
+          toast.error("Không thể kết nối với cổng thanh toán. Vui lòng thử lại sau.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Lỗi khi tạo payment link:", error);
+      toast.error("Không thể tạo liên kết thanh toán. Vui lòng thử lại sau.");
+      setLoading(false);
     }
   };
 
@@ -113,6 +146,19 @@ const OrderDetailsPage = () => {
     }
   };
 
+  const closePayosInfo = () => {
+    setPayosInfo(null);
+  };
+
+  const fetchOrderDetails = async () => {
+    try {
+      const response = await ordersAPI.getOrder(id);
+      setOrder(response.data);
+    } catch (err) {
+      console.error("Lỗi khi làm mới thông tin đơn hàng:", err);
+    }
+  };
+
   if (loading) {
     return (
       <div className="order-details-page loading">
@@ -144,6 +190,82 @@ const OrderDetailsPage = () => {
           <FontAwesomeIcon icon={faArrowLeft} className="icon-left" />
           Quay lại
         </Link>
+      </div>
+    );
+  }
+
+  // Nếu đang hiển thị thông tin PayOS
+  if (payosInfo) {
+    return (
+      <div className="order-details-page">
+        <div className="page-header">
+          <button className="back-button" onClick={closePayosInfo}>
+            <FontAwesomeIcon icon={faArrowLeft} className="icon-left" />
+            Quay lại đơn hàng
+          </button>
+          <h1>Thanh toán đơn hàng #{order._id}</h1>
+        </div>
+
+        <div className="payos-checkout-container">
+          <div className="payos-checkout-header">
+            <h2>Thanh toán qua PayOS</h2>
+            <p>Vui lòng quét mã QR hoặc nhấn vào nút bên dưới để thanh toán</p>
+          </div>
+          
+          <div className="payos-checkout-qr">
+            {payosInfo.qrCode && (
+              <img 
+                src={payosInfo.qrCode} 
+                alt="QR Code" 
+                className="payos-qr-image" 
+                onError={(e) => {
+                  e.target.src = '/placeholder.svg';
+                  e.target.onError = null;
+                }}
+              />
+            )}
+          </div>
+          
+          <div className="payos-checkout-info">
+            <div className="info-row">
+              <span>Số tiền:</span>
+              <span>{Number(payosInfo.amount).toLocaleString('vi-VN')}đ</span>
+            </div>
+            <div className="info-row">
+              <span>Mô tả:</span>
+              <span>{payosInfo.description}</span>
+            </div>
+            {payosInfo.accountNumber && (
+              <div className="info-row">
+                <span>Số tài khoản:</span>
+                <span>{payosInfo.accountNumber}</span>
+              </div>
+            )}
+            {payosInfo.accountName && (
+              <div className="info-row">
+                <span>Tên tài khoản:</span>
+                <span>{payosInfo.accountName}</span>
+              </div>
+            )}
+          </div>
+          
+          <div className="payos-checkout-actions">
+            <a 
+              href={payosInfo.checkoutUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="btn btn-primary payos-checkout-btn"
+            >
+              Thanh toán ngay
+            </a>
+            <button 
+              className="btn btn-outline payos-cancel-btn"
+              onClick={closePayosInfo}
+            >
+              Quay lại
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -188,7 +310,14 @@ const OrderDetailsPage = () => {
         </div>
         
         <div className="payment-status">
-          <h3>Trạng thái thanh toán</h3>
+          <h3>
+            Trạng thái thanh toán 
+            <span className="payment-method-badge">
+              {order.paymentMethod === 'COD' ? 'COD' : 
+               order.paymentMethod === 'payos' ? 'PayOS' : 
+               order.paymentMethod === 'banking' ? 'Chuyển khoản' : 'Không xác định'}
+            </span>
+          </h3>
           <span className={`payment-badge ${order.isPaid ? "paid" : "unpaid"}`}>
             {order.isPaid ? "Đã thanh toán" : "Chưa thanh toán"}
           </span>
@@ -221,23 +350,32 @@ const OrderDetailsPage = () => {
           )}
         </div>
 
-        {!order.isPaid && order.checkoutUrl && order.status !== "cancelled" && (
+        {/* Hiển thị nút thanh toán nếu đơn hàng chưa thanh toán và chưa hủy */}
+        {!order.isPaid && order.status !== "cancelled" && (
           <div className="payment-actions">
-            <a 
-              href={order.checkoutUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="pay-now-button"
-            >
-              <FontAwesomeIcon icon={faQrcode} className="icon-left" />
-              Thanh toán ngay
-            </a>
-            <button 
-              className="check-payment-button"
-              onClick={handleCheckPaymentStatus}
-            >
-              Kiểm tra trạng thái thanh toán
-            </button>
+            {/* Nếu đơn hàng đã có sẵn thông tin PayOS */}
+            {order.paymentMethod === 'payos' && order.checkoutUrl && (
+              <a 
+                href={order.checkoutUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="pay-now-button"
+              >
+                <FontAwesomeIcon icon={faQrcode} className="icon-left" />
+                Thanh toán bằng PayOS
+              </a>
+            )}
+            
+            {/* Nếu đơn hàng chưa có thông tin PayOS hoặc sử dụng phương thức khác */}
+            {(!order.checkoutUrl || order.paymentMethod !== 'payos') && (
+              <button 
+                className="create-payment-button"
+                onClick={handleCreatePayment}
+              >
+                <FontAwesomeIcon icon={faQrcode} className="icon-left" />
+                Thanh toán bằng PayOS
+              </button>
+            )}
           </div>
         )}
 
